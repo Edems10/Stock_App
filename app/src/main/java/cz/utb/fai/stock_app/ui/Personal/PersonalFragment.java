@@ -32,4 +32,5 @@ public class PersonalFragment extends Fragment {
 
         return root;
     }
+    
 }
