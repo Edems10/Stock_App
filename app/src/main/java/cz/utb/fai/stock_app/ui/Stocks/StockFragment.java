@@ -5,8 +5,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,26 +28,58 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
+import cz.utb.fai.stock_app.MainActivity;
 import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.Stock;
 
-public class StockFragment extends Fragment implements View.OnClickListener {
 
+public class StockFragment extends Fragment implements View.OnClickListener {
+    ArrayList<String> itemsForListView = new ArrayList<>();
     private StockViewModel stockViewModel;
-    TextView txt;
+    ListView listViewStocks;
+    EditText txt;
     Button bt;
     Context context;
+    Stock stock =null;
+    ArrayAdapter<String> adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         stockViewModel = ViewModelProviders.of(this).get(StockViewModel.class);
         View view = inflater.inflate(R.layout.fragment_stock, container, false);
-        txt = (TextView) view.findViewById(R.id.editText);
+        txt = (EditText) view.findViewById(R.id.editText);
+        txt.setOnClickListener(this);
         bt=(Button) view.findViewById(R.id.button2);
         bt.setOnClickListener(this);
         context = getContext();
+        listViewStocks =(ListView) view.findViewById(R.id.listViewStocks);
+        adapter = new ArrayAdapter<>(context,android.R.layout.simple_selectable_list_item,itemsForListView);
+        listViewStocks.setAdapter(adapter);
+        if(itemsForListView.size()==0)
+        {
+            //GetSymbolBasicInfo("AAPL");
+           // GetSymbolBasicInfo("MSFT");
+            //GetSymbolBasicInfo("GOOGL");
 
+           GetSymbolBasicInfo("SPY");
+           GetSymbolBasicInfo("DIA");
+            GetSymbolBasicInfo("QQQ");
+
+
+        }
+
+
+
+
+        listViewStocks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(context, itemsForListView.get(position),Toast.LENGTH_SHORT).show();
+            }
+        });
         return view;
     }
 
@@ -50,10 +87,17 @@ public class StockFragment extends Fragment implements View.OnClickListener {
 
     public void onClick(View v)
     {
-        // Instantiate the RequestQueue.
+        if(R.id.button2==v.getId())
+      GetSymbolBasicInfo(txt.getText().toString());
+       else if(R.id.editText==v.getId())
+            txt.getText().clear();
+    }
+
+    public void GetSymbolBasicInfo(String symbol)
+    {
+        final String[] Values ={"01. symbol","02. open","03. high","04. low","05. price","06. volume","07. latest trading day","08. previous close","09. change","10. change percent"};
         RequestQueue queue = Volley.newRequestQueue(context);
-        final String stockTicker="NIO";
-        String url ="https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+stockTicker+"&apikey="+ getString(R.string.AlphaVantageKey);
+        String url ="https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+symbol+"&apikey="+ getString(R.string.AlphaVantageKey);
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -71,23 +115,33 @@ public class StockFragment extends Fragment implements View.OnClickListener {
                             // 2. Z PROMENNE jsonObject ZISKAME "responseData" (viz struktura JSONu odpovedi)
                             JSONObject responseData = jsonObject.getJSONObject("Global Quote");
 
-                            // 3. Z PROMENNE responseData ZISKAME "translatedText" (viz struktura JSONu odpovedi)
 
-                            Stock stock =new Stock(stockTicker);
-                            stock.Open = Double.valueOf(responseData.getString(stock.Values[1]));
-                            stock.High = Double.valueOf(responseData.getString(stock.Values[2]));
-                            stock.Low = Double.valueOf(responseData.getString(stock.Values[3]));
-                            stock.Price = Double.valueOf(responseData.getString(stock.Values[4]));
-                            stock.Volume = Double.valueOf(responseData.getString(stock.Values[5]));
-                            stock.LatestTradingDay = Date.valueOf(responseData.getString(stock.Values[6]));
-                            stock.PreviousClose = Double.valueOf(responseData.getString(stock.Values[7]));
-                            stock.Change = Double.valueOf(responseData.getString(stock.Values[8]));
-                            stock.ChangePercent = responseData.getString(stock.Values[9]);
+                            stock =new Stock();
+                            stock.Symbol = responseData.getString(Values[0]);
+                            stock.Open = Double.parseDouble(responseData.getString(Values[1]));
+                            stock.High = Double.parseDouble(responseData.getString(Values[2]));
+                            stock.Low = Double.parseDouble(responseData.getString(Values[3]));
+                            stock.Price = Double.parseDouble(responseData.getString(Values[4]));
+                            stock.Volume = Double.parseDouble(responseData.getString(Values[5]));
+                            stock.LatestTradingDay = Date.valueOf(responseData.getString(Values[6]));
+                            stock.PreviousClose = Double.parseDouble(responseData.getString(Values[7]));
+                            stock.Change = Double.parseDouble(responseData.getString(Values[8]));
+                            stock.ChangePercent = responseData.getString(Values[9]);
 
+                            if(stock!=null) {
 
+                                if(stockViewModel.setStockList(stock)) {
+                                    itemsForListView.add("Ticker:"+stock.Symbol +"\tPrice:"+stock.Price);
+                                    // itemsForListView.add("%-10s - %s",stock.Symbol,Double.toString(stock.Price));
+                                    adapter.notifyDataSetChanged();
+                                }
+                                else{
+                                    Toast.makeText(context,"Already exist",Toast.LENGTH_SHORT).show();
+                                }
+                            }else{
+                                Toast.makeText(context,"Incorrect Symbol",Toast.LENGTH_SHORT).show();
+                            }
 
-                            // 4. V textView ZOBRAZIME VYSLEDEK PREKLADU
-                           // txt.setText("Response is: " + stock.High);
                         }
                         catch (JSONException e)
                         {
@@ -104,9 +158,8 @@ public class StockFragment extends Fragment implements View.OnClickListener {
                     }
                 });
 
+
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
-
-
 }
