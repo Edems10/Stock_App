@@ -1,10 +1,10 @@
 package cz.utb.fai.stock_app;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-public class Stock {
+
+public class Stock implements Serializable {
 
     public String Symbol;
     public double Open;

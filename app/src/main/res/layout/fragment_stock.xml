@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:importantForAutofill="no"
-        android:text="ss"
+        android:hint="Add Stock Symbol"
         android:inputType="textCapCharacters"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button2"
@@ -38,6 +38,7 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="120dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package cz.utb.fai.stock_app.ui.Stocks;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,20 +23,22 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.BarChart;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 
+import cz.utb.fai.stock_app.BarChartActivity;
 import cz.utb.fai.stock_app.MainActivity;
 import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.Stock;
 
 
-public class StockFragment extends Fragment implements View.OnClickListener {
+public class StockFragment extends Fragment implements View.OnClickListener, Serializable {
     ArrayList<String> itemsForListView = new ArrayList<>();
     private StockViewModel stockViewModel;
     ListView listViewStocks;
@@ -49,35 +51,37 @@ public class StockFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         stockViewModel = ViewModelProviders.of(this).get(StockViewModel.class);
+
         View view = inflater.inflate(R.layout.fragment_stock, container, false);
+
         txt = (EditText) view.findViewById(R.id.editText);
         txt.setOnClickListener(this);
+
         bt=(Button) view.findViewById(R.id.button2);
         bt.setOnClickListener(this);
+
         context = getContext();
+
         listViewStocks =(ListView) view.findViewById(R.id.listViewStocks);
         adapter = new ArrayAdapter<>(context,android.R.layout.simple_selectable_list_item,itemsForListView);
         listViewStocks.setAdapter(adapter);
+
         if(itemsForListView.size()==0)
         {
-            //GetSymbolBasicInfo("AAPL");
-           // GetSymbolBasicInfo("MSFT");
-            //GetSymbolBasicInfo("GOOGL");
-
            GetSymbolBasicInfo("SPY");
            GetSymbolBasicInfo("DIA");
-            GetSymbolBasicInfo("QQQ");
-
-
+           GetSymbolBasicInfo("QQQ");
         }
-
 
 
 
         listViewStocks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(context, itemsForListView.get(position),Toast.LENGTH_SHORT).show();
+
+                Intent I = new Intent(getActivity(), BarChartActivity.class);
+                I.putExtra("selected stock",stockViewModel.stockList.get(position));
+                getActivity().startActivity(I);
             }
         });
         return view;
@@ -89,11 +93,13 @@ public class StockFragment extends Fragment implements View.OnClickListener {
     {
         if(R.id.button2==v.getId())
       GetSymbolBasicInfo(txt.getText().toString());
+
        else if(R.id.editText==v.getId())
             txt.getText().clear();
     }
 
-    public void GetSymbolBasicInfo(String symbol)
+
+    public void GetSymbolBasicInfo(final String symbol)
     {
         final String[] Values ={"01. symbol","02. open","03. high","04. low","05. price","06. volume","07. latest trading day","08. previous close","09. change","10. change percent"};
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -131,21 +137,20 @@ public class StockFragment extends Fragment implements View.OnClickListener {
                             if(stock!=null) {
 
                                 if(stockViewModel.setStockList(stock)) {
-                                    itemsForListView.add("Ticker:"+stock.Symbol +"\tPrice:"+stock.Price);
+                                    itemsForListView.add("$"+stock.Symbol +"\t\t\t"+stock.Price +"\t\t\tChange: "+stock.Change +"\t\t\t"+stock.ChangePercent);
                                     // itemsForListView.add("%-10s - %s",stock.Symbol,Double.toString(stock.Price));
                                     adapter.notifyDataSetChanged();
                                 }
                                 else{
-                                    Toast.makeText(context,"Already exist",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context,"Already exist " +"["+symbol+"]",Toast.LENGTH_SHORT).show();
                                 }
-                            }else{
-                                Toast.makeText(context,"Incorrect Symbol",Toast.LENGTH_SHORT).show();
                             }
 
                         }
                         catch (JSONException e)
                         {
                             e.printStackTrace();
+                            Toast.makeText(context,"Incorrect Symbol "+"["+symbol+"]",Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -155,6 +160,7 @@ public class StockFragment extends Fragment implements View.OnClickListener {
                     public void onErrorResponse(VolleyError error)
                     {
                         txt.setText("That didn't work!");
+                        Toast.makeText(context,"Error With ["+symbol+"]",Toast.LENGTH_SHORT).show();
                     }
                 });
 

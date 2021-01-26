@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="250dp"
+        />
+
+    <Button
+        android:id="@+id/buttonbuy"
+        android:layout_width="125dp"
+        android:layout_height="62dp"
+        android:text="Buy/Long"
+        android:textColor="#02EE2C"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976" />
+
+    <Button
+        android:id="@+id/buttonsell"
+        android:layout_width="125dp"
+        android:layout_height="62dp"
+        android:text="Sell/Short"
+        android:textColor="#B00020"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.858"
+        app:layout_constraintStart_toEndOf="@+id/buttonbuy"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976" />
+
+    <TextView
+        android:id="@+id/open"
+        android:layout_width="125dp"
+        android:layout_height="35dp"
+        android:text="Loading data..."
+        app:layout_constraintBottom_toTopOf="@+id/high"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="@+id/barChart"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/high"
+        android:layout_width="125dp"
+        android:layout_height="35dp"
+        android:text="Loading data..."
+        app:layout_constraintBottom_toTopOf="@+id/low"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="@+id/barChart"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/low"
+        android:layout_width="125dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="132dp"
+        android:text="Loading data..."
+        app:layout_constraintBottom_toTopOf="@+id/buttonbuy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="@+id/barChart"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/current"
+        android:layout_width="125dp"
+        android:layout_height="35dp"
+        android:text="Loading data..."
+        app:layout_constraintBottom_toTopOf="@+id/open"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="@+id/barChart"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/volume"
+        android:layout_width="125dp"
+        android:layout_height="35dp"
+        android:text="Loading data..."
+        app:layout_constraintBottom_toTopOf="@+id/change"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.862"
+        app:layout_constraintStart_toEndOf="@+id/open"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/change"
+        android:layout_width="125dp"
+        android:layout_height="35dp"
+        android:text="Loading data..."
+        app:layout_constraintBottom_toTopOf="@+id/changePercentage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.862"
+        app:layout_constraintStart_toEndOf="@+id/open"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/changePercentage"
+        android:layout_width="125dp"
+        android:layout_height="35dp"
+        android:text="Loading data..."
+        app:layout_constraintBottom_toTopOf="@+id/buttonsell"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.862"
+        app:layout_constraintStart_toEndOf="@+id/open"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="0.74" />
+
+    <EditText
+        android:id="@+id/amount"
+        android:layout_width="30dp"
+        android:layout_height="62dp"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:text="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonsell"
+        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintStart_toEndOf="@+id/buttonbuy"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="0.914" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
