@@ -3,6 +3,7 @@ package cz.utb.fai.stock_app.ui.Stocks;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,12 @@ import com.github.mikephil.charting.charts.BarChart;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -54,26 +61,19 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
 
         View view = inflater.inflate(R.layout.fragment_stock, container, false);
 
-        txt = (EditText) view.findViewById(R.id.editText);
+        txt = view.findViewById(R.id.editText);
         txt.setOnClickListener(this);
-
-        bt=(Button) view.findViewById(R.id.button2);
+        bt= view.findViewById(R.id.button2);
         bt.setOnClickListener(this);
-
         context = getContext();
-
-        listViewStocks =(ListView) view.findViewById(R.id.listViewStocks);
+        listViewStocks = view.findViewById(R.id.listViewStocks);
         adapter = new ArrayAdapter<>(context,android.R.layout.simple_selectable_list_item,itemsForListView);
         listViewStocks.setAdapter(adapter);
 
         if(itemsForListView.size()==0)
         {
-           GetSymbolBasicInfo("SPY");
-           GetSymbolBasicInfo("DIA");
-           GetSymbolBasicInfo("QQQ");
+            GetSymbolBasicInfo("SPY");
         }
-
-
 
         listViewStocks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,8 +86,6 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         });
         return view;
     }
-
-
 
     public void onClick(View v)
     {
@@ -138,7 +136,6 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
 
                                 if(stockViewModel.setStockList(stock)) {
                                     itemsForListView.add("$"+stock.Symbol +"\t\t\t"+stock.Price +"\t\t\tChange: "+stock.Change +"\t\t\t"+stock.ChangePercent);
-                                    // itemsForListView.add("%-10s - %s",stock.Symbol,Double.toString(stock.Price));
                                     adapter.notifyDataSetChanged();
                                 }
                                 else{
@@ -159,7 +156,7 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
-                        txt.setText("That didn't work!");
+                       // txt.setText("That didn't work!");
                         Toast.makeText(context,"Error With ["+symbol+"]",Toast.LENGTH_SHORT).show();
                     }
                 });

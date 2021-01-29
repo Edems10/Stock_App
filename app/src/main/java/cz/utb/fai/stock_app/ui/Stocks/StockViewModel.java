@@ -23,7 +23,6 @@ public class StockViewModel extends ViewModel implements Serializable {
         boolean exists=false;
         for(int i =0;i<stockList.size();i++)
         {
-            //String temp = stockList.get(i);
             if(stockList.get(i).Symbol.equals(stock.Symbol))
                 exists=true;
         }
@@ -38,7 +37,5 @@ public class StockViewModel extends ViewModel implements Serializable {
     public StockViewModel() {
 
     }
-
-
 
 }
