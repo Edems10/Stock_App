@@ -160,8 +160,6 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
                         Toast.makeText(context,"Error With ["+symbol+"]",Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
