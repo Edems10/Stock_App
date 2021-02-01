@@ -1,4 +1,4 @@
-package cz.utb.fai.stock_app;
+package cz.utb.fai.stock_app.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,6 +21,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.concurrent.ExecutorService;
+
+import cz.utb.fai.stock_app.R;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -3,7 +3,6 @@ package cz.utb.fai.stock_app.ui.Stocks;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,25 +23,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.github.mikephil.charting.charts.BarChart;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 
-import cz.utb.fai.stock_app.BarChartActivity;
-import cz.utb.fai.stock_app.MainActivity;
+import cz.utb.fai.stock_app.ui.Graph.BarChartActivity;
 import cz.utb.fai.stock_app.R;
-import cz.utb.fai.stock_app.Stock;
+import cz.utb.fai.stock_app.Models.Stock;
 
 
 public class StockFragment extends Fragment implements View.OnClickListener, Serializable {

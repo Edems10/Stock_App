@@ -1,4 +1,4 @@
-package cz.utb.fai.stock_app;
+package cz.utb.fai.stock_app.Models;
 
 public class UserInteractions {
 

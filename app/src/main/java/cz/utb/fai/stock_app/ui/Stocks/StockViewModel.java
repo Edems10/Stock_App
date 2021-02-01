@@ -5,10 +5,8 @@ import androidx.lifecycle.ViewModel;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 
-import cz.utb.fai.stock_app.Stock;
+import cz.utb.fai.stock_app.Models.Stock;
 
 public class StockViewModel extends ViewModel implements Serializable {
 

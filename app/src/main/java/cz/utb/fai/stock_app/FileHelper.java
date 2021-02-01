@@ -1,7 +1,6 @@
 package cz.utb.fai.stock_app;
 
 import android.app.Application;
-import android.os.Environment;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -15,6 +14,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.utb.fai.stock_app.Models.UserInteractions;
 
 public  class FileHelper extends Application {
 
