@@ -1,5 +1,6 @@
 package cz.utb.fai.stock_app.ui.Graph;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -47,8 +49,9 @@ public class BarChartActivity extends AppCompatActivity {
     Stock stock;
     TextView open, high, low, current, volume, change, changePercentage;
     EditText amount;
-    Calendar cal,cal2;
+    Calendar cal, cal2;
     FileHelper fileHelper;
+    Context context;
 
     final static String appDir = "/StockAppDir/";
     final static String appDataFileName = "/stockData.txt";
@@ -62,7 +65,6 @@ public class BarChartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.graph_stock);
 
-
         chart = findViewById(R.id.barChart);
         open = findViewById(R.id.open);
         high = findViewById(R.id.high);
@@ -72,23 +74,30 @@ public class BarChartActivity extends AppCompatActivity {
         change = findViewById(R.id.change);
         changePercentage = findViewById(R.id.changePercentage);
         amount = findViewById(R.id.amount);
-        fileHelper=new FileHelper();
+        fileHelper = new FileHelper();
         cal = Calendar.getInstance();
-        cal2 = Calendar.getInstance();
+
         Intent i = getIntent();
         stock = (Stock) i.getSerializableExtra("selected stock");
         btnSell = findViewById(R.id.buttonsell);
         btnSell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                cal2.add(Calendar.DATE, 0);
-                String date = dateFormat.format(cal2.getTime());
-                UserInteractions ui = new UserInteractions(date,stock.Symbol, String.valueOf(stock.Price),String.valueOf(amount.getText()),"Sold");
-                try {
-                    fileHelper.storeToFile(ui,pathToDir,fullPathToFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (Integer.parseInt(String.valueOf(amount.getText())) > 0) {
+                    dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    cal2 = Calendar.getInstance();
+                    cal2.add(Calendar.DATE, 0);
+                    String date = dateFormat.format(cal2.getTime());
+                    UserInteractions ui = new UserInteractions(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), "Sold");
+                    try {
+                        fileHelper.storeToFileUserInteractions(ui, pathToDir, fullPathToFile);
+                        Toast.makeText(amount.getContext(), "You just Sold:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(amount.getContext(), "Cannot buy " + String.valueOf(amount.getText()), Toast.LENGTH_SHORT).show();
+                    amount.setText("1");
                 }
             }
         });
@@ -96,14 +105,22 @@ public class BarChartActivity extends AppCompatActivity {
         btnBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                cal2.add(Calendar.DATE, 0);
-                String date = dateFormat.format(cal2.getTime());
-                UserInteractions ui = new UserInteractions(date,stock.Symbol,String.valueOf(stock.Price),String.valueOf(amount.getText()),"Bought");
-                try {
-                    fileHelper.storeToFile(ui,pathToDir,fullPathToFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (Integer.parseInt(String.valueOf(amount.getText())) > 0) {
+                    dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    cal2 = Calendar.getInstance();
+                    cal2.add(Calendar.DATE, 0);
+                    String date = dateFormat.format(cal2.getTime());
+                    UserInteractions ui = new UserInteractions(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), "Bought");
+                    try {
+                        fileHelper.storeToFileUserInteractions(ui, pathToDir, fullPathToFile);
+                        Toast.makeText(amount.getContext(), "You just bought:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
+                        amount.setText("1");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(amount.getContext(), "Cannot buy " + String.valueOf(amount.getText()), Toast.LENGTH_SHORT).show();
+                    amount.setText("1");
                 }
             }
         });
@@ -115,13 +132,11 @@ public class BarChartActivity extends AppCompatActivity {
     }
 
 
-
     private void setTextTextViews() {
         current.setText("Now:" + stock.Price);
         open.setText("Open:" + stock.Open);
         high.setText("High:" + stock.High);
         low.setText("Low:" + stock.Low);
-        //double VolumeText = stock.Volume;
         volume.setText("Volume:" + String.format("%.0f", stock.Volume));
         change.setText("Change:" + stock.Change);
         changePercentage.setText("Change:" + stock.ChangePercent);
@@ -132,7 +147,7 @@ public class BarChartActivity extends AppCompatActivity {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i <= time; i++) {
             cal.add(Calendar.DATE, -1);
-           String date = dateFormat.format(cal.getTime());
+            String date = dateFormat.format(cal.getTime());
             if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
                 dateBack.add(date);
             }

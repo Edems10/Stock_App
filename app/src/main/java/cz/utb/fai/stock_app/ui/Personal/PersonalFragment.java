@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 
 import com.android.volley.Request;
@@ -38,13 +37,10 @@ import cz.utb.fai.stock_app.Models.UserInteractions;
 
 public class PersonalFragment extends Fragment {
 
-    private PersonalViewModel personalViewModel;
-
 
     final static String appDir = "/StockAppDir/";
     final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
     final static String fullPathToFileWithInteractions = pathToStorage + appDir + "/stockData.txt";
-    //final static String fullPathToFileWithMoney = pathToStorage + appDir + "/AccountValue";
 
     FileHelper fileHelper;
     Context context;
@@ -57,16 +53,14 @@ public class PersonalFragment extends Fragment {
     List<Stock> interactedStocksUpdatedPrice = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        personalViewModel = ViewModelProviders.of(this).get(PersonalViewModel.class);
         View view = inflater.inflate(R.layout.fragment_personal, container, false);
         textView = view.findViewById(R.id.text_dashboard);
-
         listView = view.findViewById(R.id.listViewHistory);
         context = getContext();
         fileHelper = new FileHelper();
 
         try {
-            userInteractionsList = fileHelper.loadFromFile(fullPathToFileWithInteractions);
+            userInteractionsList = fileHelper.loadFromFileUserInteractions(fullPathToFileWithInteractions);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -85,10 +79,8 @@ public class PersonalFragment extends Fragment {
             getSymbolBasicInfo(stocksInteractedWithList.get(i));
         }
         if(interactedStocksUpdatedPrice.size()<3){
-       //textView.setText(String.valueOf(calculateProfit()));
     }
         return view;
-
     }
 
 
@@ -96,7 +88,6 @@ public class PersonalFragment extends Fragment {
     {
         double profit = 0;
         if(interactedStocksUpdatedPrice.size()!=0) {
-
             Stock stock = new Stock();
             for (int i = 0; i < userInteractionsList.size(); i++) {
                 UserInteractions interactions = userInteractionsList.get(i);
@@ -106,14 +97,12 @@ public class PersonalFragment extends Fragment {
                         stock = interactedStocksUpdatedPrice.get(j);
                     }
                 }
-
                 int amountOfShares = Integer.parseInt(interactions.getAmount());
                 if (interactions.getOperation().equals("Sold")) {
                     profit += (Double.parseDouble(interactions.getPriceOfSymbol()) - stock.Price) * amountOfShares;
                 } else {
                     profit += (stock.Price - Double.parseDouble(interactions.getPriceOfSymbol())) * amountOfShares;
                 }
-
             }
         }
         textView.setText(String.format("Profit: %.2f$", profit));
@@ -141,7 +130,7 @@ public class PersonalFragment extends Fragment {
     }
 
 
-    public void getSymbolBasicInfo(final String symbol)
+    private void getSymbolBasicInfo(final String symbol)
     {
         final String[] Values ={"01. symbol","02. open","03. high","04. low","05. price","06. volume","07. latest trading day","08. previous close","09. change","10. change percent"};
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -163,7 +152,6 @@ public class PersonalFragment extends Fragment {
                             // 2. Z PROMENNE jsonObject ZISKAME "responseData" (viz struktura JSONu odpovedi)
                             JSONObject responseData = jsonObject.getJSONObject("Global Quote");
 
-
                             Stock stock =new Stock();
                             stock.Symbol = responseData.getString(Values[0]);
                             stock.Open = Double.parseDouble(responseData.getString(Values[1]));
@@ -177,7 +165,6 @@ public class PersonalFragment extends Fragment {
                             stock.ChangePercent = responseData.getString(Values[9]);
 
                             if(stock!=null) {
-
                                 interactedStocksUpdatedPrice.add(stock);
                             }
                             calculateProfit();
@@ -194,7 +181,6 @@ public class PersonalFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
-                        // txt.setText("That didn't work!");
                         Toast.makeText(context,"Error With ["+symbol+"]",Toast.LENGTH_SHORT).show();
                     }
                 });

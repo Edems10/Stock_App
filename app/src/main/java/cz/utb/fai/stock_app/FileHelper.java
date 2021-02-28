@@ -15,12 +15,67 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.utb.fai.stock_app.Models.SettingsModel;
 import cz.utb.fai.stock_app.Models.UserInteractions;
 
 public  class FileHelper extends Application {
 
 
-    public List<UserInteractions> loadFromFile(String fullPathToFile) throws IOException {
+
+
+    public void createSettings(SettingsModel settingsModel, String pathToDir, String fullPathToFile) throws IOException {
+        Gson gson = new Gson();
+        String settingsToJson = gson.toJson(settingsModel);
+        dirExist(pathToDir);
+
+        File file = new File(fullPathToFile);
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+            try {
+                FileOutputStream fos = new FileOutputStream(fullPathToFile, true);
+                fos.write(settingsToJson.getBytes());
+                fos.flush();
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //todo redo this and finish need to get SettingsModel class and possibly redo the
+        // or easier just send the whole class and remove the contents of current class will decide
+    public void updateSettings(SettingsModel settingsModel, String pathToDir, String fullPathToFile) throws IOException {
+        Gson gson = new Gson();
+        String settingsToJson = gson.toJson(settingsModel);
+        dirExist(pathToDir);
+
+        try {
+            FileOutputStream fos = new FileOutputStream(fullPathToFile, true);
+            fos.write(settingsToJson.getBytes());
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public SettingsModel loadFromSettings(String fullPathToFile) throws IOException {
+        Gson gson = new Gson();
+        BufferedReader br = new BufferedReader(new FileReader(fullPathToFile));
+        String line = "";
+        String dataFromFile ="";
+        while ((line = br.readLine()) != null) {
+            dataFromFile += line;
+        }
+        Type dataListType = new TypeToken<SettingsModel>() {
+        }.getType();
+
+        return gson.fromJson(dataFromFile, dataListType);
+    }
+
+
+    public List<UserInteractions> loadFromFileUserInteractions(String fullPathToFile) throws IOException {
         Gson gson = new Gson();
         BufferedReader br = new BufferedReader(new FileReader(fullPathToFile));
         String line = "";
@@ -35,8 +90,7 @@ public  class FileHelper extends Application {
         return gson.fromJson(dataFromFile, dataListType);
     }
 
-
-    public void storeToFile(UserInteractions userInteractions,String pathToDir,String fullPathToFile) throws IOException {
+    public void storeToFileUserInteractions(UserInteractions userInteractions, String pathToDir, String fullPathToFile) throws IOException {
         Gson gson = new Gson();
         String userInteractionsToJson = gson.toJson(userInteractions);
         dirExist(pathToDir);

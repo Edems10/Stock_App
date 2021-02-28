@@ -93,24 +93,16 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         final String[] Values ={"01. symbol","02. open","03. high","04. low","05. price","06. volume","07. latest trading day","08. previous close","09. change","10. change percent"};
         RequestQueue queue = Volley.newRequestQueue(context);
         String url ="https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+symbol+"&apikey="+ getString(R.string.AlphaVantageKey);
-
-        // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>()
                 {
                     @Override
                     public void onResponse(String response)
                     {
-                        // ZPRACOVANI JSONu:
                         try
                         {
-                            //1. Z DAT, KTERA JSME OBDRZELI VYTVORIME JSONObject
                             JSONObject jsonObject = new JSONObject(response);
-
-                            // 2. Z PROMENNE jsonObject ZISKAME "responseData" (viz struktura JSONu odpovedi)
                             JSONObject responseData = jsonObject.getJSONObject("Global Quote");
-
-
                             stock =new Stock();
                             stock.Symbol = responseData.getString(Values[0]);
                             stock.Open = Double.parseDouble(responseData.getString(Values[1]));
@@ -124,7 +116,6 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
                             stock.ChangePercent = responseData.getString(Values[9]);
 
                             if(stock!=null) {
-
                                 if(stockViewModel.setStockList(stock)) {
                                     itemsForListView.add("$"+stock.Symbol +"\t\t\t"+stock.Price +"\t\t\tChange: "+stock.Change +"\t\t\t"+stock.ChangePercent);
                                     adapter.notifyDataSetChanged();
@@ -133,7 +124,6 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
                                     Toast.makeText(context,"Already exist " +"["+symbol+"]",Toast.LENGTH_SHORT).show();
                                 }
                             }
-
                         }
                         catch (JSONException e)
                         {
@@ -147,11 +137,9 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
-                       // txt.setText("That didn't work!");
                         Toast.makeText(context,"Error With ["+symbol+"]",Toast.LENGTH_SHORT).show();
                     }
                 });
-        // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
 }
