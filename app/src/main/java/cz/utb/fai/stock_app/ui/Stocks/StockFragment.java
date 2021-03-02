@@ -3,6 +3,7 @@ package cz.utb.fai.stock_app.ui.Stocks;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,16 +29,26 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import cz.utb.fai.stock_app.FileHelper;
+import cz.utb.fai.stock_app.Models.SettingsModel;
 import cz.utb.fai.stock_app.ui.Graph.BarChartActivity;
 import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.Models.Stock;
 
 
 public class StockFragment extends Fragment implements View.OnClickListener, Serializable {
+
+    final static String appDir = "/StockAppDir/";
+    final static String appDataFileName = "/settings.txt";
+    final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
+    final static String fullPathToFile = pathToStorage + appDir + appDataFileName;
+
+
     ArrayList<String> itemsForListView = new ArrayList<>();
     private StockViewModel stockViewModel;
     ListView listViewStocks;
@@ -45,25 +57,34 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
     Context context;
     Stock stock =null;
     ArrayAdapter<String> adapter;
+    Switch switchApi;
+    String currentApi="AlphaVantage";
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         stockViewModel = ViewModelProviders.of(this).get(StockViewModel.class);
 
         View view = inflater.inflate(R.layout.fragment_stock, container, false);
-
-        txt = view.findViewById(R.id.editText);
+        FileHelper fileHelper =new FileHelper();
+        try {
+            SettingsModel settingsModel=fileHelper.loadFromSettings(fullPathToFile);
+            currentApi = settingsModel.getApiProvider();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        txt = view.findViewById(R.id.editTextStockList);
         txt.setOnClickListener(this);
-        bt= view.findViewById(R.id.button2);
+        bt= view.findViewById(R.id.buttonAddStockToList);
         bt.setOnClickListener(this);
         context = getContext();
         listViewStocks = view.findViewById(R.id.listViewStocks);
+        switchApi =view.findViewById(R.id.switchApi);
         adapter = new ArrayAdapter<>(context,android.R.layout.simple_selectable_list_item,itemsForListView);
         listViewStocks.setAdapter(adapter);
 
         if(itemsForListView.size()==0)
         {
-            GetSymbolBasicInfo("SPY");
+            GetSymbolBasicInfo("SPY",currentApi);
         }
 
         listViewStocks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -78,17 +99,18 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         return view;
     }
 
+    //todo dodelat switch na prepinani api 3.3.2021
     public void onClick(View v)
     {
-        if(R.id.button2==v.getId())
-      GetSymbolBasicInfo(txt.getText().toString());
+        if(R.id.buttonAddStockToList ==v.getId())
+      GetSymbolBasicInfo(txt.getText().toString(),currentApi);
 
-       else if(R.id.editText==v.getId())
+       else if(R.id.editTextStockList ==v.getId())
             txt.getText().clear();
     }
 
 
-    public void GetSymbolBasicInfo(final String symbol)
+    public void GetSymbolBasicInfo(final String symbol,String apiProvider)
     {
         final String[] Values ={"01. symbol","02. open","03. high","04. low","05. price","06. volume","07. latest trading day","08. previous close","09. change","10. change percent"};
         RequestQueue queue = Volley.newRequestQueue(context);

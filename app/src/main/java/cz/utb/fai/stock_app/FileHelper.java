@@ -3,6 +3,7 @@ package cz.utb.fai.stock_app;
 import android.app.Application;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -47,9 +48,16 @@ public  class FileHelper extends Application {
     public void updateSettings(SettingsModel settingsModel, String pathToDir, String fullPathToFile) throws IOException {
         Gson gson = new Gson();
         String settingsToJson = gson.toJson(settingsModel);
-        dirExist(pathToDir);
 
+
+        dirExist(pathToDir);
+        File file = new File(fullPathToFile);
+        file.delete();
+        if (!file.exists()) {
+            file.createNewFile();
+        }
         try {
+
             FileOutputStream fos = new FileOutputStream(fullPathToFile, true);
             fos.write(settingsToJson.getBytes());
             fos.flush();
@@ -120,7 +128,8 @@ public  class FileHelper extends Application {
             }
         }
     }
-
+//todo dodelat celkove file pro porfolio managment (bonus for me)
+// pridat pote upravovani te file napr AMD stocks bougth :1 -> bought:2
 
     private void dirExist(String filedir) {
         File file = new File(filedir);

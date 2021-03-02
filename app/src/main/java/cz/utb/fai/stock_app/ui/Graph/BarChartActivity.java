@@ -79,7 +79,7 @@ public class BarChartActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         stock = (Stock) i.getSerializableExtra("selected stock");
-        btnSell = findViewById(R.id.buttonsell);
+        btnSell = findViewById(R.id.buttonSell);
         btnSell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +101,7 @@ public class BarChartActivity extends AppCompatActivity {
                 }
             }
         });
-        btnBuy = findViewById(R.id.buttonbuy);
+        btnBuy = findViewById(R.id.buttonBuy);
         btnBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

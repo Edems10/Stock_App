@@ -2,5 +2,14 @@
     <string name="app_name">Stock_App</string>
     <string name="title_stocks">Stocks</string>
     <string name="title_personal">Personal</string>
+    <string name="button_add_fragmet_stock">ADD</string>
+    <string name="fragment_stock_edit_text_hint">Stock Symbol</string>
+    <string name="graph_button_buy">Buy/Long</string>
+    <string name="graph_button_sell">Sell/Short</string>
+    <string name="graph_text_view">Loading data...</string>
+    <string name="graph_edit_text_amount">1</string>
+    <string name="personal_text_history">Your History</string>
+    <string name="fragment_stock_switch">AlphaVantage</string>
+
 
 </resources>

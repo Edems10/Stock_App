@@ -45,10 +45,11 @@ public class MainActivity extends AppCompatActivity {
         //creating settings if they don't exist
         //dodelani singletonu pro settings
         //Settings settings = Settings.getInstance();
-        SettingsModel sm;
+        SettingsModel sm= new SettingsModel("Free",1200,"AlphaVantage");
         FileHelper fh = new FileHelper();
         try {
-            sm=fh.loadFromSettings(fullPathToFile);
+
+            fh.updateSettings(sm,pathToDir,fullPathToFile);
         } catch (IOException e) {
             e.printStackTrace();
         }

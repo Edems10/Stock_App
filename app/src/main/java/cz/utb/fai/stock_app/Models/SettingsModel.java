@@ -3,7 +3,7 @@ package cz.utb.fai.stock_app.Models;
 import java.io.File;
 
 import cz.utb.fai.stock_app.FileHelper;
-
+//todo pridelat enum pro selected Api jakmile budu vedet jake tam budou :)
 public class SettingsModel {
 
     public SettingsModel(String version, int delay, String apiProvider) {
