@@ -40,7 +40,7 @@ public class PersonalFragment extends Fragment {
 
     final static String appDir = "/StockAppDir/";
     final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
-    final static String fullPathToFileWithInteractions = pathToStorage + appDir + "/stockData.txt";
+    final static String fullPathToFileWithInteractions = pathToStorage + appDir + "/history";
 
     FileHelper fileHelper;
     Context context;
@@ -75,6 +75,7 @@ public class PersonalFragment extends Fragment {
 
         stocksInteractedWithList = getSymbolsFromList();
 
+        //dostavani akutialnich dat o akciich
         for (int i = 0; i < stocksInteractedWithList.size(); i++) {
             getSymbolBasicInfo(stocksInteractedWithList.get(i));
         }

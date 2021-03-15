@@ -20,8 +20,8 @@ import cz.utb.fai.stock_app.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    final static String appDir = "/StockAppDir/";
-    final static String appDataFileName = "/settings.txt";
+    final static String appDir = "/StockApp/";
+    final static String appDataFileName = "/settings";
     final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
     final static String pathToDir = pathToStorage + appDir;
     final static String fullPathToFile = pathToStorage + appDir + appDataFileName;
@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //creating settings if they don't exist
-        //dodelani singletonu pro settings
+
         //Settings settings = Settings.getInstance();
         SettingsModel sm= new SettingsModel("Free",1200,"AlphaVantage");
         FileHelper fh = new FileHelper();

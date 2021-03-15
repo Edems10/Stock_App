@@ -16,13 +16,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.utb.fai.stock_app.Models.Portfolio;
 import cz.utb.fai.stock_app.Models.SettingsModel;
 import cz.utb.fai.stock_app.Models.UserInteractions;
 
 public  class FileHelper extends Application {
-
-
-
 
     public void createSettings(SettingsModel settingsModel, String pathToDir, String fullPathToFile) throws IOException {
         Gson gson = new Gson();
@@ -43,8 +41,6 @@ public  class FileHelper extends Application {
             }
         }
 
-        //todo redo this and finish need to get SettingsModel class and possibly redo the
-        // or easier just send the whole class and remove the contents of current class will decide
     public void updateSettings(SettingsModel settingsModel, String pathToDir, String fullPathToFile) throws IOException {
         Gson gson = new Gson();
         String settingsToJson = gson.toJson(settingsModel);
@@ -128,9 +124,22 @@ public  class FileHelper extends Application {
             }
         }
     }
+
+
 //todo dodelat celkove file pro porfolio managment (bonus for me)
 // pridat pote upravovani te file napr AMD stocks bougth :1 -> bought:2
 
+    public boolean sellStockPortfolio(Portfolio portfolio, String pathTodir, String fullPathToFile)throws IOException{
+
+
+        return true;
+    }
+
+    public boolean buyStockPortfolio(Portfolio portfolio, String pathTodir, String fullPathToFile)throws IOException{
+
+
+        return true;
+    }
     private void dirExist(String filedir) {
         File file = new File(filedir);
         if (!file.exists()) {

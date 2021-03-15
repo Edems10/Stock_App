@@ -44,7 +44,7 @@ import cz.utb.fai.stock_app.Models.Stock;
 public class StockFragment extends Fragment implements View.OnClickListener, Serializable {
 
     final static String appDir = "/StockAppDir/";
-    final static String appDataFileName = "/settings.txt";
+    final static String appDataFileName = "/settings";
     final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
     final static String fullPathToFile = pathToStorage + appDir + appDataFileName;
 

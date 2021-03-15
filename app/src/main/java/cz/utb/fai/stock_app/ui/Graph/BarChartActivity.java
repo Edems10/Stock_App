@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.utb.fai.stock_app.FileHelper;
+import cz.utb.fai.stock_app.Models.Portfolio;
 import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.Models.Stock;
 import cz.utb.fai.stock_app.Models.UserInteractions;
@@ -54,10 +55,12 @@ public class BarChartActivity extends AppCompatActivity {
     Context context;
 
     final static String appDir = "/StockAppDir/";
-    final static String appDataFileName = "/stockData.txt";
+    final static String appDataFileName = "/history";
+    final static String appDataFileName2 = "/portfolio";
     final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
     final static String pathToDir = pathToStorage + appDir;
     final static String fullPathToFile = pathToStorage + appDir + appDataFileName;
+    final static String fullPathToFile2 = pathToStorage + appDir + appDataFileName2;
 
 
     @Override
@@ -89,9 +92,14 @@ public class BarChartActivity extends AppCompatActivity {
                     cal2.add(Calendar.DATE, 0);
                     String date = dateFormat.format(cal2.getTime());
                     UserInteractions ui = new UserInteractions(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), "Sold");
+                    Portfolio portfolio = new Portfolio(stock.Symbol, Integer.valueOf(String.valueOf(amount.getText())),Double.valueOf(stock.Price));
                     try {
-                        fileHelper.storeToFileUserInteractions(ui, pathToDir, fullPathToFile);
-                        Toast.makeText(amount.getContext(), "You just Sold:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
+                        if(fileHelper.sellStockPortfolio(portfolio,pathToDir,fullPathToFile2))
+                        {
+                            fileHelper.storeToFileUserInteractions(ui, pathToDir, fullPathToFile);
+                            Toast.makeText(amount.getContext(), "You just Sold:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
+                        }
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -111,10 +119,14 @@ public class BarChartActivity extends AppCompatActivity {
                     cal2.add(Calendar.DATE, 0);
                     String date = dateFormat.format(cal2.getTime());
                     UserInteractions ui = new UserInteractions(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), "Bought");
+                    Portfolio portfolio = new Portfolio(stock.Symbol, Integer.valueOf(String.valueOf(amount.getText())),Double.valueOf(stock.Price));
+
                     try {
-                        fileHelper.storeToFileUserInteractions(ui, pathToDir, fullPathToFile);
-                        Toast.makeText(amount.getContext(), "You just bought:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
-                        amount.setText("1");
+                        if(fileHelper.buyStockPortfolio(portfolio,pathToDir,fullPathToFile2)) {
+                            fileHelper.storeToFileUserInteractions(ui, pathToDir, fullPathToFile);
+                            Toast.makeText(amount.getContext(), "You just bought:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
+                            amount.setText("1");
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
