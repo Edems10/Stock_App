@@ -31,16 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.utb.fai.stock_app.FileHelper;
+import cz.utb.fai.stock_app.Models.Trade;
 import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.Models.Stock;
 import cz.utb.fai.stock_app.Models.UserInteractions;
 
 public class PersonalFragment extends Fragment {
-
-
-    final static String appDir = "/StockAppDir/";
-    final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
-    final static String fullPathToFileWithInteractions = pathToStorage + appDir + "/history";
 
     FileHelper fileHelper;
     Context context;
@@ -52,6 +48,9 @@ public class PersonalFragment extends Fragment {
     List<String> stocksInteractedWithList = new ArrayList<>();
     List<Stock> interactedStocksUpdatedPrice = new ArrayList<>();
 
+    //todo pridelani Portfolia a Money
+    //mozna pridelat pie chart
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_personal, container, false);
         textView = view.findViewById(R.id.text_dashboard);
@@ -60,7 +59,7 @@ public class PersonalFragment extends Fragment {
         fileHelper = new FileHelper();
 
         try {
-            userInteractionsList = fileHelper.loadFromFileUserInteractions(fullPathToFileWithInteractions);
+            userInteractionsList = fileHelper.loadFromFileUserInteractions();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,7 +67,7 @@ public class PersonalFragment extends Fragment {
         listView.setAdapter(adapter);
         for (int i = userInteractionsList.size() - 1; i >= 0; i--) {
             UserInteractions interactions = userInteractionsList.get(i);
-            itemsForListView.add(interactions.getDate() + "  " + interactions.getOperation() + " " + interactions.getAmount() + "  $" + interactions.getNameOfSymbol() + " for " + interactions.getPriceOfSymbol() + "$");
+            itemsForListView.add(interactions.getDate() + "  " + interactions.getOperation() + " " + interactions.getAmount() + "  $" + interactions.getName() + " for " + interactions.getPrice() + "$");
 
         }
         adapter.notifyDataSetChanged();
@@ -79,12 +78,10 @@ public class PersonalFragment extends Fragment {
         for (int i = 0; i < stocksInteractedWithList.size(); i++) {
             getSymbolBasicInfo(stocksInteractedWithList.get(i));
         }
-        if(interactedStocksUpdatedPrice.size()<3){
-    }
         return view;
     }
 
-
+//todo predelat uplne
     private void calculateProfit()
     {
         double profit = 0;
@@ -94,15 +91,15 @@ public class PersonalFragment extends Fragment {
                 UserInteractions interactions = userInteractionsList.get(i);
 
                 for (int j = 0; j < interactedStocksUpdatedPrice.size(); j++) {
-                    if (interactedStocksUpdatedPrice.get(j).Symbol.equals(interactions.getNameOfSymbol())) {
+                    if (interactedStocksUpdatedPrice.get(j).Symbol.equals(interactions.getName())) {
                         stock = interactedStocksUpdatedPrice.get(j);
                     }
                 }
                 int amountOfShares = Integer.parseInt(interactions.getAmount());
-                if (interactions.getOperation().equals("Sold")) {
-                    profit += (Double.parseDouble(interactions.getPriceOfSymbol()) - stock.Price) * amountOfShares;
+                if (interactions.getOperation().equals(Trade.SELL)) {
+                    profit += (Double.parseDouble(interactions.getPrice()) - stock.Price) * amountOfShares;
                 } else {
-                    profit += (stock.Price - Double.parseDouble(interactions.getPriceOfSymbol())) * amountOfShares;
+                    profit += (stock.Price - Double.parseDouble(interactions.getPrice())) * amountOfShares;
                 }
             }
         }
@@ -117,14 +114,14 @@ public class PersonalFragment extends Fragment {
             if(symbols.size()>0) {
                 boolean alreadyExists=false;
                 for (int j = 0; j < symbols.size(); j++) {
-                    if (symbols.get(j).equals(userInteractionsList.get(i).getNameOfSymbol())) {
+                    if (symbols.get(j).equals(userInteractionsList.get(i).getName())) {
                         alreadyExists=true;
                     }
                 }
-                if(!alreadyExists)symbols.add(userInteractionsList.get(i).getNameOfSymbol());
+                if(!alreadyExists)symbols.add(userInteractionsList.get(i).getName());
             }else
             {
-                symbols.add(userInteractionsList.get(i).getNameOfSymbol());
+                symbols.add(userInteractionsList.get(i).getName());
             }
         }
         return symbols;

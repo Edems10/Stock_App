@@ -43,7 +43,7 @@ import cz.utb.fai.stock_app.Models.Stock;
 
 public class StockFragment extends Fragment implements View.OnClickListener, Serializable {
 
-    final static String appDir = "/StockAppDir/";
+    final static String appDir = "/StockApp/";
     final static String appDataFileName = "/settings";
     final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
     final static String fullPathToFile = pathToStorage + appDir + appDataFileName;
@@ -67,7 +67,7 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         View view = inflater.inflate(R.layout.fragment_stock, container, false);
         FileHelper fileHelper =new FileHelper();
         try {
-            SettingsModel settingsModel=fileHelper.loadFromSettings(fullPathToFile);
+            SettingsModel settingsModel=fileHelper.loadFromSettings();
             currentApi = settingsModel.getApiProvider();
         } catch (IOException e) {
             e.printStackTrace();

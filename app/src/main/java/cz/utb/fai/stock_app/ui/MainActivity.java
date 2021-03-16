@@ -15,43 +15,27 @@ import java.io.File;
 import java.io.IOException;
 
 import cz.utb.fai.stock_app.FileHelper;
+import cz.utb.fai.stock_app.Models.PortfolioMoney;
 import cz.utb.fai.stock_app.Models.SettingsModel;
+import cz.utb.fai.stock_app.Models.Trade;
 import cz.utb.fai.stock_app.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    final static String appDir = "/StockApp/";
-    final static String appDataFileName = "/settings";
-    final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
-    final static String pathToDir = pathToStorage + appDir;
-    final static String fullPathToFile = pathToStorage + appDir + appDataFileName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        //todo oznamit userovi ze nemam prava zapisovat do file
 
+        FileHelper fileHelper =new FileHelper();
+        fileHelper.checkDirectoryExists();
+        fileHelper.checkMoneyExists();
+        fileHelper.checkHistoryExists();
+        fileHelper.checkSettingsExists();
+        fileHelper.checkPortfolioExists();
 
-        File f=new File(fullPathToFile);
-        if(!f.exists()) {
-            FileHelper fp = new FileHelper();
-            try {
-                SettingsModel settingsModel = new SettingsModel("Free",1200,"AlphaVantage");
-                fp.createSettings(settingsModel,pathToDir, fullPathToFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        //Settings settings = Settings.getInstance();
-        SettingsModel sm= new SettingsModel("Free",1200,"AlphaVantage");
-        FileHelper fh = new FileHelper();
-        try {
-
-            fh.updateSettings(sm,pathToDir,fullPathToFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
         setTheme(R.style.AppTheme);
