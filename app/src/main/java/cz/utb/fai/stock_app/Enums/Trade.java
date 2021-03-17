@@ -1,4 +1,4 @@
-package cz.utb.fai.stock_app.Models;
+package cz.utb.fai.stock_app.Enums;
 
 public enum Trade {
     SELL,

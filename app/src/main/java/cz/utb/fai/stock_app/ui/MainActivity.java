@@ -1,7 +1,6 @@
 package cz.utb.fai.stock_app.ui;
 
 import android.os.Bundle;
-import android.os.Environment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -11,13 +10,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.io.File;
-import java.io.IOException;
-
 import cz.utb.fai.stock_app.FileHelper;
-import cz.utb.fai.stock_app.Models.PortfolioMoney;
-import cz.utb.fai.stock_app.Models.SettingsModel;
-import cz.utb.fai.stock_app.Models.Trade;
 import cz.utb.fai.stock_app.R;
 
 public class MainActivity extends AppCompatActivity {

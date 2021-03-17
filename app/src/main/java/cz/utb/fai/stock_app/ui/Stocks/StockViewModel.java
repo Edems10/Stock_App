@@ -11,10 +11,6 @@ import cz.utb.fai.stock_app.Models.Stock;
 public class StockViewModel extends ViewModel implements Serializable {
 
 
-//    public List<Stock> getStockList() {
-//        return stockList;
-//    }
-
     public boolean setStockList(Stock stock) {
         boolean exists=false;
         for(int i =0;i<stockList.size();i++)

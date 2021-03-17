@@ -1,18 +1,15 @@
 package cz.utb.fai.stock_app.ui.Graph;
 
-import android.content.Context;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,21 +20,17 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import cz.utb.fai.stock_app.FileHelper;
-import cz.utb.fai.stock_app.Models.PortfolioStock;
-import cz.utb.fai.stock_app.Models.Trade;
+import cz.utb.fai.stock_app.Enums.Trade;
 import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.Models.Stock;
-import cz.utb.fai.stock_app.Models.UserInteractions;
+import cz.utb.fai.stock_app.Models.History;
 
 
 public class BarChartActivity extends AppCompatActivity {
@@ -83,11 +76,12 @@ public class BarChartActivity extends AppCompatActivity {
                     cal2 = Calendar.getInstance();
                     cal2.add(Calendar.DATE, 0);
                     String date = dateFormat.format(cal2.getTime());
-                    UserInteractions ui = new UserInteractions(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), Trade.SELL);
+                    History history = new History(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), Trade.SELL);
                     try {
+                        //todo vratit hlasku kdyz nejde prodat :)/koupit
                         if(fileHelper.sellStockPortfolio(stock,Integer.valueOf(String.valueOf(amount.getText()))))
                         {
-                            fileHelper.storeToFileUserInteractions(ui);
+                            fileHelper.storeToFileUserInteractions(history);
                             Toast.makeText(amount.getContext(), "You just Sold:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
                         }
 
@@ -109,10 +103,10 @@ public class BarChartActivity extends AppCompatActivity {
                     cal2 = Calendar.getInstance();
                     cal2.add(Calendar.DATE, 0);
                     String date = dateFormat.format(cal2.getTime());
-                    UserInteractions ui = new UserInteractions(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), Trade.BUY);
+                    History history = new History(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), Trade.BUY);
                     try {
                         if(fileHelper.buyStockPortfolio(stock,Integer.valueOf(String.valueOf(amount.getText())))) {
-                            fileHelper.storeToFileUserInteractions(ui);
+                            fileHelper.storeToFileUserInteractions(history);
                             Toast.makeText(amount.getContext(), "You just bought:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
                             amount.setText("1");
                         }

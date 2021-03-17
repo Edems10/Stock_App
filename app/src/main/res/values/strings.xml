@@ -10,7 +10,5 @@
     <string name="graph_edit_text_amount">1</string>
     <string name="personal_text_history">Your History</string>
     <string name="fragment_stock_switch">AlphaVantage</string>
-    <string name="name_of_portfolio_cash">cash</string>
-
-
+    <string name="personal_detail">Click item for more detail</string>
 </resources>

@@ -1,9 +1,11 @@
 package cz.utb.fai.stock_app.Models;
 
-public class UserInteractions {
+import cz.utb.fai.stock_app.Enums.Trade;
+
+public class History {
 
 
-    public UserInteractions(String date, String name, String price, String amount, Trade operation) {
+    public History(String date, String name, String price, String amount, Trade operation) {
         this.date=date;
         this.name = name;
         this.price = price;

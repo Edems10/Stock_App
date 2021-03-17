@@ -3,7 +3,6 @@ package cz.utb.fai.stock_app.ui.Stocks;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,18 +34,14 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 import cz.utb.fai.stock_app.FileHelper;
-import cz.utb.fai.stock_app.Models.SettingsModel;
+import cz.utb.fai.stock_app.Models.PortfolioStock;
+import cz.utb.fai.stock_app.Models.StockList;
 import cz.utb.fai.stock_app.ui.Graph.BarChartActivity;
 import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.Models.Stock;
 
 
 public class StockFragment extends Fragment implements View.OnClickListener, Serializable {
-
-    final static String appDir = "/StockApp/";
-    final static String appDataFileName = "/settings";
-    final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
-    final static String fullPathToFile = pathToStorage + appDir + appDataFileName;
 
 
     ArrayList<String> itemsForListView = new ArrayList<>();
@@ -58,20 +53,22 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
     Stock stock =null;
     ArrayAdapter<String> adapter;
     Switch switchApi;
-    String currentApi="AlphaVantage";
+    StockList stockList;
+    FileHelper fileHelper =new FileHelper();
+    ArrayList<PortfolioStock> portfolioStocks = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         stockViewModel = ViewModelProviders.of(this).get(StockViewModel.class);
-
         View view = inflater.inflate(R.layout.fragment_stock, container, false);
-        FileHelper fileHelper =new FileHelper();
-        try {
-            SettingsModel settingsModel=fileHelper.loadFromSettings();
-            currentApi = settingsModel.getApiProvider();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+
+//        try {
+//            SettingsModel settingsModel=fileHelper.loadFromSettings();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+
+        stockList=StockList.getInstance();
         txt = view.findViewById(R.id.editTextStockList);
         txt.setOnClickListener(this);
         bt= view.findViewById(R.id.buttonAddStockToList);
@@ -82,10 +79,16 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         adapter = new ArrayAdapter<>(context,android.R.layout.simple_selectable_list_item,itemsForListView);
         listViewStocks.setAdapter(adapter);
 
-        if(itemsForListView.size()==0)
-        {
-            GetSymbolBasicInfo("SPY",currentApi);
+        try {
+            portfolioStocks=fileHelper.loadFromPortfolio();
+            for(int i=0;i<portfolioStocks.size();i++)
+            {
+                GetSymbolBasicInfo(portfolioStocks.get(i).getTicker());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
 
         listViewStocks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -93,6 +96,8 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
 
                 Intent I = new Intent(getActivity(), BarChartActivity.class);
                 I.putExtra("selected stock",stockViewModel.stockList.get(position));
+               // I.putExtra("selected stock",stockList.getCurrentStocks().get(position));
+
                 getActivity().startActivity(I);
             }
         });
@@ -103,18 +108,18 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
     public void onClick(View v)
     {
         if(R.id.buttonAddStockToList ==v.getId())
-      GetSymbolBasicInfo(txt.getText().toString(),currentApi);
+      GetSymbolBasicInfo(txt.getText().toString());
 
        else if(R.id.editTextStockList ==v.getId())
             txt.getText().clear();
     }
 
 
-    public void GetSymbolBasicInfo(final String symbol,String apiProvider)
+    public void GetSymbolBasicInfo(final String symbol)
     {
         final String[] Values ={"01. symbol","02. open","03. high","04. low","05. price","06. volume","07. latest trading day","08. previous close","09. change","10. change percent"};
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url ="https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+symbol+"&apikey="+ getString(R.string.AlphaVantageKey);
+        String url ="https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+symbol+"&apikey="+ getString(R.string.ALphaVatangeKey2);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>()
                 {
@@ -141,6 +146,7 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
                                 if(stockViewModel.setStockList(stock)) {
                                     itemsForListView.add("$"+stock.Symbol +"\t\t\t"+stock.Price +"\t\t\tChange: "+stock.Change +"\t\t\t"+stock.ChangePercent);
                                     adapter.notifyDataSetChanged();
+                                    stockList.setCurrentStocks(stock);
                                 }
                                 else{
                                     Toast.makeText(context,"Already exist " +"["+symbol+"]",Toast.LENGTH_SHORT).show();

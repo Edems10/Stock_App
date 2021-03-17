@@ -20,8 +20,8 @@ import cz.utb.fai.stock_app.Models.PortfolioMoney;
 import cz.utb.fai.stock_app.Models.PortfolioStock;
 import cz.utb.fai.stock_app.Models.SettingsModel;
 import cz.utb.fai.stock_app.Models.Stock;
-import cz.utb.fai.stock_app.Models.Trade;
-import cz.utb.fai.stock_app.Models.UserInteractions;
+import cz.utb.fai.stock_app.Enums.Trade;
+import cz.utb.fai.stock_app.Models.History;
 
 public  class FileHelper extends Application {
 
@@ -88,7 +88,7 @@ public  class FileHelper extends Application {
     }
 
 
-    public List<UserInteractions> loadFromFileUserInteractions() throws IOException {
+    public List<History> loadFromFileUserInteractions() throws IOException {
         Gson gson = new Gson();
         BufferedReader br = new BufferedReader(new FileReader(fullPathToHistory));
         String line = "";
@@ -97,15 +97,15 @@ public  class FileHelper extends Application {
             dataFromFile += line;
         }
         dataFromFile += "]";
-        Type dataListType = new TypeToken<ArrayList<UserInteractions>>() {
+        Type dataListType = new TypeToken<ArrayList<History>>() {
         }.getType();
 
         return gson.fromJson(dataFromFile, dataListType);
     }
 
-    public void storeToFileUserInteractions(UserInteractions userInteractions) throws IOException {
+    public void storeToFileUserInteractions(History history) throws IOException {
         Gson gson = new Gson();
-        String userInteractionsToJson = gson.toJson(userInteractions);
+        String userInteractionsToJson = gson.toJson(history);
         File file = new File(fullPathToHistory);
         if(file.length()!=0)
         {

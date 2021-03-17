@@ -1,188 +1,236 @@
 package cz.utb.fai.stock_app.ui.Personal;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cz.utb.fai.stock_app.FileHelper;
-import cz.utb.fai.stock_app.Models.Trade;
+import cz.utb.fai.stock_app.Models.PortfolioMoney;
+import cz.utb.fai.stock_app.Models.PortfolioStock;
+import cz.utb.fai.stock_app.Models.StockList;
+import cz.utb.fai.stock_app.Models.StockProfit;
 import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.Models.Stock;
-import cz.utb.fai.stock_app.Models.UserInteractions;
+import cz.utb.fai.stock_app.Models.History;
 
 public class PersonalFragment extends Fragment {
 
     FileHelper fileHelper;
     Context context;
-    ArrayList<String> itemsForListView = new ArrayList<>();
-    ListView listView ;
-    TextView textView;
+    ArrayList<String> itemsForListViewHistory = new ArrayList<>();
+    ListView listViewHistory;
+    TextView textViewDashboard, textViewDetails;
     ArrayAdapter<String> adapter;
-    List<UserInteractions> userInteractionsList = new ArrayList();
-    List<String> stocksInteractedWithList = new ArrayList<>();
-    List<Stock> interactedStocksUpdatedPrice = new ArrayList<>();
-
-    //todo pridelani Portfolia a Money
-    //mozna pridelat pie chart
+    List<History> historyList = new ArrayList();
+    StockList stockList = StockList.getInstance();
+    PieChart pieChart;
+    ArrayList<PortfolioStock> portfolioStocks;
+    List<StockProfit> stockProfits = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_personal, container, false);
-        textView = view.findViewById(R.id.text_dashboard);
-        listView = view.findViewById(R.id.listViewHistory);
+        textViewDashboard = view.findViewById(R.id.text_dashboard);
+        listViewHistory = view.findViewById(R.id.listViewHistory);
+        textViewDetails = view.findViewById(R.id.textdetails);
         context = getContext();
         fileHelper = new FileHelper();
+        pieChart = view.findViewById(R.id.pieChart);
+        pieChart.setOnChartValueSelectedListener(new pieChartOnChartValueSelectedListener());
 
         try {
-            userInteractionsList = fileHelper.loadFromFileUserInteractions();
+            portfolioStocks = fileHelper.loadFromPortfolio();
+            historyList = fileHelper.loadFromFileUserInteractions();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        adapter = new ArrayAdapter<>(context, android.R.layout.simple_selectable_list_item, itemsForListView);
-        listView.setAdapter(adapter);
-        for (int i = userInteractionsList.size() - 1; i >= 0; i--) {
-            UserInteractions interactions = userInteractionsList.get(i);
-            itemsForListView.add(interactions.getDate() + "  " + interactions.getOperation() + " " + interactions.getAmount() + "  $" + interactions.getName() + " for " + interactions.getPrice() + "$");
+        adapter = new ArrayAdapter<>(context, android.R.layout.simple_selectable_list_item, itemsForListViewHistory);
+        listViewHistory.setAdapter(adapter);
+        for (int i = historyList.size() - 1; i >= 0; i--) {
+            History interactions = historyList.get(i);
+            itemsForListViewHistory.add(interactions.getDate() + "  " + interactions.getOperation() + " " + interactions.getAmount() + "  $" + interactions.getName() + " for " + interactions.getPrice() + "$");
 
         }
         adapter.notifyDataSetChanged();
 
-        stocksInteractedWithList = getSymbolsFromList();
-
-        //dostavani akutialnich dat o akciich
-        for (int i = 0; i < stocksInteractedWithList.size(); i++) {
-            getSymbolBasicInfo(stocksInteractedWithList.get(i));
+        try {
+            createPortfolioChart();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+
+        try {
+            String formater = String.format("Current Value: %.2f%s",accountValue(),fileHelper.loadCurrentMoney().getCurrency());
+            textViewDashboard.setText(formater);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return view;
     }
 
-//todo predelat uplne
-    private void calculateProfit()
-    {
-        double profit = 0;
-        if(interactedStocksUpdatedPrice.size()!=0) {
-            Stock stock = new Stock();
-            for (int i = 0; i < userInteractionsList.size(); i++) {
-                UserInteractions interactions = userInteractionsList.get(i);
 
-                for (int j = 0; j < interactedStocksUpdatedPrice.size(); j++) {
-                    if (interactedStocksUpdatedPrice.get(j).Symbol.equals(interactions.getName())) {
-                        stock = interactedStocksUpdatedPrice.get(j);
-                    }
-                }
-                int amountOfShares = Integer.parseInt(interactions.getAmount());
-                if (interactions.getOperation().equals(Trade.SELL)) {
-                    profit += (Double.parseDouble(interactions.getPrice()) - stock.Price) * amountOfShares;
-                } else {
-                    profit += (stock.Price - Double.parseDouble(interactions.getPrice())) * amountOfShares;
-                }
-            }
+    private class pieChartOnChartValueSelectedListener implements OnChartValueSelectedListener {
+
+        //todo dodelat po kliknuti aby se ukazal detail stock
+        @Override
+        public void onValueSelected(Entry e, Highlight h) {
+//            PieEntry pieEntry = (PieEntry) e;
+//            int profit = 0;
+//            for (int i = 0; i < portfolioStocks.size(); i++) {
+//                PortfolioStock portfolioStock = portfolioStocks.get(i);
+//                if (pieEntry.getLabel() == portfolioStock.getSymbol()) {
+//                    for (int j = 0; j < stocks.size(); j++) {
+//                    }
+//                    profit = (portfolioStock.getAveragePrice() * portfolioStock.getAmount()) *
+//                }
+//            }
+
         }
-        textView.setText(String.format("Profit: %.2f$", profit));
+
+        @Override
+        public void onNothingSelected() {
+
+        }
     }
 
-    private List<String> getSymbolsFromList()
-    {
-        List<String> symbols = new ArrayList();
-        for(int i =0;i<userInteractionsList.size();i++)
+
+    private void initPieChart() {
+        //using percentage as values instead of amount
+        pieChart.setUsePercentValues(true);
+
+        //remove the description label on the lower left corner, default true if not set
+        pieChart.getDescription().setEnabled(false);
+
+        //enabling the user to rotate the chart, default true
+        pieChart.setRotationEnabled(true);
+        //adding friction when rotating the pie chart
+        pieChart.setDragDecelerationFrictionCoef(0.9f);
+        //setting the first entry start from right hand side, default starting from top
+        pieChart.setRotationAngle(0);
+
+        //highlight the entry when it is tapped, default true if not set
+        pieChart.setHighlightPerTapEnabled(true);
+        //adding animation so the entries pop up from 0 degree
+        pieChart.animateY(1400, Easing.EaseOutQuad);
+        //setting the color of the hole in the middle, default white
+        pieChart.setHoleRadius(0f);
+        pieChart.setTransparentCircleRadius(0f);
+
+    }
+
+
+    private void createPortfolioChart() throws IOException {
+        initPieChart();
+
+        ArrayList<PieEntry> pieEntries = new ArrayList<>();
+
+        PortfolioMoney portfolioMoney = fileHelper.loadCurrentMoney();
+        String label = "";
+
+        //initializing data
+        Map<String, Integer> typeAmountMap = new HashMap<>();
+        typeAmountMap.put("CASH", (int) Math.round(portfolioMoney.getAmount()));
+
+        for (int i = 0; i < portfolioStocks.size(); i++) {
+            typeAmountMap.put(
+                    portfolioStocks.get(i).getTicker(),
+                    (portfolioStocks.get(i).getAmount()) * (int) Math.round(portfolioStocks.get(i).getAveragePrice()));
+
+        }
+
+        //initializing colors for the entries
+        ArrayList<Integer> colors = new ArrayList<>();
+        colors.add(Color.parseColor("#304567"));
+        colors.add(Color.parseColor("#309967"));
+        colors.add(Color.parseColor("#476567"));
+        colors.add(Color.parseColor("#890567"));
+        colors.add(Color.parseColor("#a35567"));
+        colors.add(Color.parseColor("#ff5f67"));
+        colors.add(Color.parseColor("#3ca567"));
+
+        //input data and fit data into pie chart entry
+        for (String type : typeAmountMap.keySet()) {
+            pieEntries.add(new PieEntry(typeAmountMap.get(type).floatValue(), type));
+        }
+
+        //collecting the entries with label name
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, label);
+        //setting text size of the value
+        pieDataSet.setValueTextSize(20f);
+        //providing color list for coloring different entries
+        pieDataSet.setColors(colors);
+        //grouping the data set from entry to chart
+        PieData pieData = new PieData(pieDataSet);
+        //showing the value of the entries, default true if not set
+        pieData.setDrawValues(false);
+
+        pieChart.setData(pieData);
+        pieChart.invalidate();
+
+
+    }
+
+    private double accountValue() throws IOException {
+
+        List<Stock> currentStocks = stockList.getCurrentStocks();
+
+        for(int i=0;i<portfolioStocks.size();i++)
         {
-            if(symbols.size()>0) {
-                boolean alreadyExists=false;
-                for (int j = 0; j < symbols.size(); j++) {
-                    if (symbols.get(j).equals(userInteractionsList.get(i).getName())) {
-                        alreadyExists=true;
-                    }
-                }
-                if(!alreadyExists)symbols.add(userInteractionsList.get(i).getName());
-            }else
+            calculateProfit(currentStocks,portfolioStocks.get(i));
+        }
+
+
+        double accountValue=0;
+        for(int i=0;i<stockProfits.size();i++)
+        {
+            accountValue+=stockProfits.get(i).getValue();
+        }
+        return accountValue+fileHelper.loadCurrentMoney().getAmount();
+
+    }
+
+    private void calculateProfit(List<Stock> currentStocks,PortfolioStock portfolioStock)
+    {
+        for (int i = 0; i < currentStocks.size(); i++) {
+            Stock stock = currentStocks.get(i);
+
+
+            if(portfolioStock.getTicker().equals(stock.Symbol))
             {
-                symbols.add(userInteractionsList.get(i).getName());
+                float percentageChange= (float) ((portfolioStock.getAveragePrice()-stock.Price)/stock.Price)*100;
+                double profit=(portfolioStock.getAveragePrice()*portfolioStock.getAmount())-(stock.Price*portfolioStock.getAmount());
+                double value = profit+(portfolioStock.getAveragePrice()*portfolioStock.getAmount());
+                StockProfit stockProfit = new StockProfit(stock.Symbol,portfolioStock.getAmount(),portfolioStock.getAveragePrice(),stock.Price,percentageChange,profit, value);
+                stockProfits.add(stockProfit);
+                return;
             }
         }
-        return symbols;
     }
 
-
-    private void getSymbolBasicInfo(final String symbol)
-    {
-        final String[] Values ={"01. symbol","02. open","03. high","04. low","05. price","06. volume","07. latest trading day","08. previous close","09. change","10. change percent"};
-        RequestQueue queue = Volley.newRequestQueue(context);
-        String url ="https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+symbol+"&apikey="+ getString(R.string.AlphaVantageKey);
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response)
-                    {
-                        // ZPRACOVANI JSONu:
-                        try
-                        {
-                            //1. Z DAT, KTERA JSME OBDRZELI VYTVORIME JSONObject
-                            JSONObject jsonObject = new JSONObject(response);
-
-                            // 2. Z PROMENNE jsonObject ZISKAME "responseData" (viz struktura JSONu odpovedi)
-                            JSONObject responseData = jsonObject.getJSONObject("Global Quote");
-
-                            Stock stock =new Stock();
-                            stock.Symbol = responseData.getString(Values[0]);
-                            stock.Open = Double.parseDouble(responseData.getString(Values[1]));
-                            stock.High = Double.parseDouble(responseData.getString(Values[2]));
-                            stock.Low = Double.parseDouble(responseData.getString(Values[3]));
-                            stock.Price = Double.parseDouble(responseData.getString(Values[4]));
-                            stock.Volume = Double.parseDouble(responseData.getString(Values[5]));
-                            stock.LatestTradingDay = Date.valueOf(responseData.getString(Values[6]));
-                            stock.PreviousClose = Double.parseDouble(responseData.getString(Values[7]));
-                            stock.Change = Double.parseDouble(responseData.getString(Values[8]));
-                            stock.ChangePercent = responseData.getString(Values[9]);
-
-                            if(stock!=null) {
-                                interactedStocksUpdatedPrice.add(stock);
-                            }
-                            calculateProfit();
-                        }
-                        catch (JSONException e)
-                        {
-                            e.printStackTrace();
-                            Toast.makeText(context,"Incorrect Symbol "+"["+symbol+"]",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error)
-                    {
-                        Toast.makeText(context,"Error With ["+symbol+"]",Toast.LENGTH_SHORT).show();
-                    }
-                });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
 }
