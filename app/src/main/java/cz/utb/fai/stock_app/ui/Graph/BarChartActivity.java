@@ -1,6 +1,7 @@
 package cz.utb.fai.stock_app.ui.Graph;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,12 +23,15 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+
 import cz.utb.fai.stock_app.FileHelper;
 import cz.utb.fai.stock_app.Enums.Trade;
 import cz.utb.fai.stock_app.R;
@@ -53,6 +59,80 @@ public class BarChartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.graph_stock);
 
+        init();
+
+
+        btnSell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSellClick();
+            }
+        });
+
+        btnBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBuyClick();
+            }
+        });
+
+        setTextTextViews();
+        getDateForAPI(35, cal);
+        getIntradayData(stock.Symbol);
+
+    }
+
+
+    @SuppressLint("SimpleDateFormat")
+    private void onBuyClick() {
+        if (Integer.parseInt(String.valueOf(amount.getText())) > 0) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            cal2 = Calendar.getInstance();
+            cal2.add(Calendar.DATE, 0);
+            String date = dateFormat.format(cal2.getTime());
+            History history = new History(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), Trade.BUY);
+            try {
+                if (fileHelper.buyStockPortfolio(stock, Integer.valueOf(String.valueOf(amount.getText())))) {
+                    fileHelper.storeToFileUserInteractions(history);
+                    Toast.makeText(amount.getContext(), "You just bought:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
+                    amount.setText("1");
+                }else {
+                    Toast.makeText(amount.getContext(), "Cannot buy " +String.valueOf(amount.getText())+" of "+stock.Symbol+
+                             "- Not enough CASH", Toast.LENGTH_SHORT).show();
+                    amount.setText("1");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private void onSellClick() {
+        if (Integer.parseInt(String.valueOf(amount.getText())) > 0) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            cal2 = Calendar.getInstance();
+            cal2.add(Calendar.DATE, 0);
+            String date = dateFormat.format(cal2.getTime());
+            History history = new History(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), Trade.SELL);
+            try {
+                if (fileHelper.sellStockPortfolio(stock, Integer.valueOf(String.valueOf(amount.getText())))) {
+                    fileHelper.storeToFileUserInteractions(history);
+                    Toast.makeText(amount.getContext(), "You just Sold:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(amount.getContext(), "Cannot Sell " +String.valueOf(amount.getText())+" of "+stock.Symbol+
+                            "00- Not enough Stock", Toast.LENGTH_SHORT).show();
+                    amount.setText("1");
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void init() {
+        btnBuy = findViewById(R.id.buttonBuy);
         chart = findViewById(R.id.barChart);
         open = findViewById(R.id.open);
         high = findViewById(R.id.high);
@@ -60,73 +140,16 @@ public class BarChartActivity extends AppCompatActivity {
         current = findViewById(R.id.current);
         volume = findViewById(R.id.volume);
         change = findViewById(R.id.change);
+        btnSell = findViewById(R.id.buttonSell);
         changePercentage = findViewById(R.id.changePercentage);
         amount = findViewById(R.id.amount);
         fileHelper = new FileHelper();
         cal = Calendar.getInstance();
-
         Intent i = getIntent();
         stock = (Stock) i.getSerializableExtra("selected stock");
-        btnSell = findViewById(R.id.buttonSell);
-        btnSell.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Integer.parseInt(String.valueOf(amount.getText())) > 0) {
-                    dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    cal2 = Calendar.getInstance();
-                    cal2.add(Calendar.DATE, 0);
-                    String date = dateFormat.format(cal2.getTime());
-                    History history = new History(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), Trade.SELL);
-                    try {
-                        //todo vratit hlasku kdyz nejde prodat :)/koupit
-                        if(fileHelper.sellStockPortfolio(stock,Integer.valueOf(String.valueOf(amount.getText()))))
-                        {
-                            fileHelper.storeToFileUserInteractions(history);
-                            Toast.makeText(amount.getContext(), "You just Sold:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
-                        }
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Toast.makeText(amount.getContext(), "Cannot buy " + String.valueOf(amount.getText()), Toast.LENGTH_SHORT).show();
-                    amount.setText("1");
-                }
-            }
-        });
-        btnBuy = findViewById(R.id.buttonBuy);
-        btnBuy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Integer.parseInt(String.valueOf(amount.getText())) > 0) {
-                    dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    cal2 = Calendar.getInstance();
-                    cal2.add(Calendar.DATE, 0);
-                    String date = dateFormat.format(cal2.getTime());
-                    History history = new History(date, stock.Symbol, String.valueOf(stock.Price), String.valueOf(amount.getText()), Trade.BUY);
-                    try {
-                        if(fileHelper.buyStockPortfolio(stock,Integer.valueOf(String.valueOf(amount.getText())))) {
-                            fileHelper.storeToFileUserInteractions(history);
-                            Toast.makeText(amount.getContext(), "You just bought:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
-                            amount.setText("1");
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Toast.makeText(amount.getContext(), "Cannot buy " + String.valueOf(amount.getText()), Toast.LENGTH_SHORT).show();
-                    amount.setText("1");
-                }
-            }
-        });
-        setTextTextViews();
-
-        getDateForAPI(35, cal);
-        getIntradayData(stock.Symbol);
-
     }
 
-
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     private void setTextTextViews() {
         current.setText("Now:" + stock.Price);
         open.setText("Open:" + stock.Open);
@@ -138,6 +161,7 @@ public class BarChartActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("SimpleDateFormat")
     private void getDateForAPI(int time, Calendar cal) {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i <= time; i++) {
@@ -193,7 +217,6 @@ public class BarChartActivity extends AppCompatActivity {
                     }
                 });
 
-
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
@@ -222,4 +245,5 @@ public class BarChartActivity extends AppCompatActivity {
             chart.animateY(800);
         }
     }
+
 }

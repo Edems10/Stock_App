@@ -81,9 +81,10 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
 
         try {
             portfolioStocks=fileHelper.loadFromPortfolio();
-            for(int i=0;i<portfolioStocks.size();i++)
-            {
-                GetSymbolBasicInfo(portfolioStocks.get(i).getTicker());
+            if(portfolioStocks!=null) {
+                for (int i = 0; i < portfolioStocks.size(); i++) {
+                    GetSymbolBasicInfo(portfolioStocks.get(i).getTicker());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -96,8 +97,6 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
 
                 Intent I = new Intent(getActivity(), BarChartActivity.class);
                 I.putExtra("selected stock",stockViewModel.stockList.get(position));
-               // I.putExtra("selected stock",stockList.getCurrentStocks().get(position));
-
                 getActivity().startActivity(I);
             }
         });
