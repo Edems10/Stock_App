@@ -25,6 +25,8 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,6 +121,7 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    //shows value after clicking on pie chart
     private class pieChartOnChartValueSelectedListener implements OnChartValueSelectedListener {
 
         @SuppressLint("DefaultLocale")
@@ -291,13 +294,14 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private void calculateProfit(List<Stock> currentStocks, PortfolioStock portfolioStock) {
+    private void calculateProfit(@NotNull List<Stock> currentStocks, PortfolioStock portfolioStock) {
         for (int i = 0; i < currentStocks.size(); i++) {
             Stock stock = currentStocks.get(i);
 
             if (portfolioStock.getTicker().equals(stock.Symbol)) {
-                float percentageChange = (float) ((portfolioStock.getAveragePrice() - stock.Price) / stock.Price) * 100;
-                double profit = (portfolioStock.getAveragePrice() * portfolioStock.getAmount()) - (stock.Price * portfolioStock.getAmount());
+                float percentageChange = (float) ((stock.Price-portfolioStock.getAveragePrice()) / stock.Price) * 100;
+                //zmena here
+                double profit =  (stock.Price * portfolioStock.getAmount())- (portfolioStock.getAveragePrice() * portfolioStock.getAmount());
                 double value = profit + (portfolioStock.getAveragePrice() * portfolioStock.getAmount());
                 StockProfit stockProfit = new StockProfit(stock.Symbol,
                         portfolioStock.getAmount(),

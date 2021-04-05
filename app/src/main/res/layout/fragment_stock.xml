@@ -33,25 +33,14 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <ListView
-        android:id="@id/listViewStocks"
-        android:layout_width="408dp"
-        android:layout_height="679dp"
+        android:id="@+id/listViewStocks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@android:dimen/app_icon_size"
+        android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextStockList" />
-
-    <Switch
-        android:id="@+id/switchApi"
-        android:layout_width="105dp"
-        android:layout_height="38dp"
-        android:layout_marginBottom="22dp"
-        android:text="@string/fragment_stock_switch"
-        app:layout_constraintBottom_toTopOf="@+id/listViewStocks"
-        app:layout_constraintEnd_toStartOf="@+id/editTextStockList"
-        app:layout_constraintHorizontal_bias="0.193"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.217" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,6 +16,4 @@
         android:name="cz.utb.fai.stock_app.ui.Personal.PersonalFragment"
         android:label="@string/title_personal"
         tools:layout="@layout/fragment_personal" />
-
-
 </navigation>

@@ -3,6 +3,7 @@ package cz.utb.fai.stock_app.ui.Stocks;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +76,6 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         bt.setOnClickListener(this);
         context = getContext();
         listViewStocks = view.findViewById(R.id.listViewStocks);
-        switchApi =view.findViewById(R.id.switchApi);
         adapter = new ArrayAdapter<>(context,android.R.layout.simple_selectable_list_item,itemsForListView);
         listViewStocks.setAdapter(adapter);
 
@@ -119,7 +119,12 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         final String[] Values ={"01. symbol","02. open","03. high","04. low","05. price","06. volume","07. latest trading day","08. previous close","09. change","10. change percent"};
         RequestQueue queue = Volley.newRequestQueue(context);
         String url ="https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+symbol+"&apikey="+ getString(R.string.ALphaVatangeKey2);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        // works on emulator
+        String url1 ="http://10.0.2.2:8080/edems_swag/stock_api/1.0.0/quote?ticker="+symbol;
+        //works for mobile on same network
+        String url2 ="https://10.0.0.1:8080/edems_swag/stock_api/1.0.0/quote?ticker="+symbol;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
                 new Response.Listener<String>()
                 {
                     @Override
@@ -164,6 +169,7 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
+                        Log.e("tmp",""+error+"");
                         Toast.makeText(context,"Error With ["+symbol+"]",Toast.LENGTH_SHORT).show();
                     }
                 });
