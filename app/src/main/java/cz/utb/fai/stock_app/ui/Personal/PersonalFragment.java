@@ -49,7 +49,7 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
     Context context;
     ArrayList<String> itemsForListViewHistory = new ArrayList<>();
     ListView listViewHistory;
-    TextView textViewDashboard, textViewDetails;
+    TextView textViewDashboard;
     ArrayAdapter<String> adapter;
     List<History> historyList = new ArrayList<>();
     StockList stockList;
@@ -237,10 +237,12 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
         if(portfolioStocks!=null)
         {
         for (int i = 0; i < portfolioStocks.size(); i++) {
-            typeAmountMap.put(
-                    portfolioStocks.get(i).getTicker(),
-                    (portfolioStocks.get(i).getAmount()) *
-                            (int) Math.round(portfolioStocks.get(i).getAveragePrice()));
+            if(portfolioStocks.get(i).getAmount()>0) {
+                typeAmountMap.put(
+                        portfolioStocks.get(i).getTicker(),
+                        (portfolioStocks.get(i).getAmount()) *
+                                (int) Math.round(portfolioStocks.get(i).getAveragePrice()));
+            }
         }
         }
 
@@ -295,24 +297,26 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
     }
 
     private void calculateProfit(@NotNull List<Stock> currentStocks, PortfolioStock portfolioStock) {
-        for (int i = 0; i < currentStocks.size(); i++) {
-            Stock stock = currentStocks.get(i);
+       if(currentStocks!=null) {
+           for (int i = 0; i < currentStocks.size(); i++) {
+               Stock stock = currentStocks.get(i);
 
-            if (portfolioStock.getTicker().equals(stock.Symbol)) {
-                float percentageChange = (float) ((stock.Price-portfolioStock.getAveragePrice()) / stock.Price) * 100;
-                //zmena here
-                double profit =  (stock.Price * portfolioStock.getAmount())- (portfolioStock.getAveragePrice() * portfolioStock.getAmount());
-                double value = profit + (portfolioStock.getAveragePrice() * portfolioStock.getAmount());
-                StockProfit stockProfit = new StockProfit(stock.Symbol,
-                        portfolioStock.getAmount(),
-                        portfolioStock.getAveragePrice(),
-                        stock.Price, percentageChange,
-                        profit,
-                        value);
-                stockProfits.add(stockProfit);
-                return;
-            }
-        }
+               if (portfolioStock.getTicker().equals(stock.Symbol)) {
+                   float percentageChange = (float) ((stock.Price - portfolioStock.getAveragePrice()) / stock.Price) * 100;
+                   //zmena here
+                   double profit = (stock.Price * portfolioStock.getAmount()) - (portfolioStock.getAveragePrice() * portfolioStock.getAmount());
+                   double value = profit + (portfolioStock.getAveragePrice() * portfolioStock.getAmount());
+                   StockProfit stockProfit = new StockProfit(stock.Symbol,
+                           portfolioStock.getAmount(),
+                           portfolioStock.getAveragePrice(),
+                           stock.Price, percentageChange,
+                           profit,
+                           value);
+                   stockProfits.add(stockProfit);
+                   return;
+               }
+           }
+       }
     }
 
 }

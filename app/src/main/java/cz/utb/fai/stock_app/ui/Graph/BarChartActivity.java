@@ -53,35 +53,28 @@ public class BarChartActivity extends AppCompatActivity {
     Calendar cal, cal2;
     FileHelper fileHelper;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.graph_stock);
-
         init();
-
-
         btnSell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onSellClick();
             }
         });
-
         btnBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBuyClick();
             }
         });
-
         setTextTextViews();
         getDateForAPI(35, cal);
         getIntradayData(stock.Symbol);
 
     }
-
 
     @SuppressLint("SimpleDateFormat")
     private void onBuyClick() {
@@ -94,10 +87,10 @@ public class BarChartActivity extends AppCompatActivity {
             try {
                 if (fileHelper.buyStockPortfolio(stock, Integer.valueOf(String.valueOf(amount.getText())))) {
                     fileHelper.storeToFileUserInteractions(history);
-                    Toast.makeText(amount.getContext(), "You just bought:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(amount.getContext(), "You just bought:" + amount.getText() + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
                     amount.setText("1");
                 }else {
-                    Toast.makeText(amount.getContext(), "Cannot buy " +String.valueOf(amount.getText())+" of "+stock.Symbol+
+                    Toast.makeText(amount.getContext(), "Cannot buy " + amount.getText() +" of "+stock.Symbol+
                              "- Not enough CASH", Toast.LENGTH_SHORT).show();
                     amount.setText("1");
                 }
@@ -118,10 +111,10 @@ public class BarChartActivity extends AppCompatActivity {
             try {
                 if (fileHelper.sellStockPortfolio(stock, Integer.valueOf(String.valueOf(amount.getText())))) {
                     fileHelper.storeToFileUserInteractions(history);
-                    Toast.makeText(amount.getContext(), "You just Sold:" + String.valueOf(amount.getText()) + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(amount.getContext(), "You just Sold:" + amount.getText() + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(amount.getContext(), "Cannot Sell " +String.valueOf(amount.getText())+" of "+stock.Symbol+
-                            "00- Not enough Stock", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(amount.getContext(), "Cannot Sell " + amount.getText() +" of "+stock.Symbol+
+                            "- Not enough Stock", Toast.LENGTH_SHORT).show();
                     amount.setText("1");
                 }
 
@@ -174,32 +167,28 @@ public class BarChartActivity extends AppCompatActivity {
 
     }
 
-
     private void getIntradayData(String symbol) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&apikey=" + getString(R.string.AlphaVantageKey);
+        //     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&apikey=" + getString(R.string.AlphaVantageKey);
+        // works on emulator
+        String url1 ="http://10.0.2.2:8080/edems_swag/stock_api/1.0.0/history?ticker="+symbol;
+        //works for mobile on same network
+        String url2 ="http://10.0.0.1:8080/edems_swag/stock_api/1.0.0/history?ticker="+symbol;
 
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // ZPRACOVANI JSONu:
                         try {
-                            //1. Z DAT, KTERA JSME OBDRZELI VYTVORIME JSONObject
                             JSONObject jsonObject = new JSONObject(response);
-                            // JSONObject childObject = array.getAsJsonObject();
-
-                            // 2. Z PROMENNE jsonObject ZISKAME "responseData" (viz struktura JSONu odpovedi)
                             responseData = jsonObject.getJSONObject("Time Series (Daily)");
-
-                            JSONObject responsData2 = null;
+                            JSONObject responseData2 = null;
                             for (int i = 0; i < dateBack.size(); i++) {
 
                                 try {
-                                    responsData2 = responseData.getJSONObject(dateBack.get(i));
-
-                                    price.add(responsData2.getString("5. adjusted close"));
+                                    responseData2 = responseData.getJSONObject(dateBack.get(i));
+                                    price.add(responseData2.getString("5. adjusted close"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -213,7 +202,7 @@ public class BarChartActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // txt.setText("That didn't work!");
+
                     }
                 });
 
@@ -221,9 +210,7 @@ public class BarChartActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-
     private void createGraph(ArrayList<String> temp) {
-
         ArrayList<BarEntry> stockDays = new ArrayList<>();
 
         if (price.size() > 0) {
@@ -236,12 +223,10 @@ public class BarChartActivity extends AppCompatActivity {
             else
                 barDataSet.setColor(Color.rgb(50, 255, 50));
             barDataSet.setValueTextSize(16f);
-
             BarData barData = new BarData(barDataSet);
-
             chart.setFitBars(true);
             chart.setData(barData);
-            chart.getDescription().setText("Last " + String.valueOf(price.size()) + " Trading days");
+            chart.getDescription().setText("Last " + price.size() + " Trading days");
             chart.animateY(800);
         }
     }

@@ -3,6 +3,7 @@ package cz.utb.fai.stock_app.ui.Stocks;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +33,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import cz.utb.fai.stock_app.FileHelper;
 import cz.utb.fai.stock_app.Models.PortfolioStock;
@@ -47,27 +50,35 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
 
     ArrayList<String> itemsForListView = new ArrayList<>();
     private StockViewModel stockViewModel;
+    private RequestQueue queue;
     ListView listViewStocks;
     EditText txt;
     Button bt;
     Context context;
     Stock stock =null;
     ArrayAdapter<String> adapter;
-    Switch switchApi;
     StockList stockList;
     FileHelper fileHelper =new FileHelper();
     ArrayList<PortfolioStock> portfolioStocks = new ArrayList<>();
+    List<String> symbols = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        stockViewModel = ViewModelProviders.of(this).get(StockViewModel.class);
         View view = inflater.inflate(R.layout.fragment_stock, container, false);
+        initUI(view);
+        listViewStocks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent I = new Intent(getActivity(), BarChartActivity.class);
+                I.putExtra("selected stock",stockViewModel.stockList.get(position));
+                getActivity().startActivity(I);
+            }
+        });
+        return view;
+    }
 
-
-//        try {
-//            SettingsModel settingsModel=fileHelper.loadFromSettings();
-//        } catch (IOException e) {
-//            e.printStackTrace();
+    private void initUI(View view) {
+        stockViewModel = ViewModelProviders.of(this).get(StockViewModel.class);
 
         stockList=StockList.getInstance();
         txt = view.findViewById(R.id.editTextStockList);
@@ -89,21 +100,31 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-        listViewStocks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Intent I = new Intent(getActivity(), BarChartActivity.class);
-                I.putExtra("selected stock",stockViewModel.stockList.get(position));
-                getActivity().startActivity(I);
-            }
-        });
-        return view;
+        StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build();
+        StrictMode.setVmPolicy(policy);
     }
 
-    //todo dodelat switch na prepinani api 3.3.2021
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        queue=null;
+        stockList=null;
+        txt=null;
+        bt=null;
+        context=null;
+        listViewStocks=null;
+        stock=null;
+        fileHelper=null;
+        portfolioStocks=null;
+        adapter=null;
+        stockViewModel=null;
+        itemsForListView=null;
+    }
+
+
     public void onClick(View v)
     {
         if(R.id.buttonAddStockToList ==v.getId())
@@ -114,15 +135,18 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
     }
 
 
+
     public void GetSymbolBasicInfo(final String symbol)
     {
         final String[] Values ={"01. symbol","02. open","03. high","04. low","05. price","06. volume","07. latest trading day","08. previous close","09. change","10. change percent"};
-        RequestQueue queue = Volley.newRequestQueue(context);
+           if(queue==null) {
+               queue = Volley.newRequestQueue(context);
+           }
         String url ="https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+symbol+"&apikey="+ getString(R.string.ALphaVatangeKey2);
         // works on emulator
         String url1 ="http://10.0.2.2:8080/edems_swag/stock_api/1.0.0/quote?ticker="+symbol;
         //works for mobile on same network
-        String url2 ="https://10.0.0.1:8080/edems_swag/stock_api/1.0.0/quote?ticker="+symbol;
+        String url2 ="http://10.0.0.1:8080/edems_swag/stock_api/1.0.0/quote?ticker="+symbol;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
                 new Response.Listener<String>()
@@ -134,6 +158,7 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
                         {
                             JSONObject jsonObject = new JSONObject(response);
                             JSONObject responseData = jsonObject.getJSONObject("Global Quote");
+
                             stock =new Stock();
                             stock.Symbol = responseData.getString(Values[0]);
                             stock.Open = Double.parseDouble(responseData.getString(Values[1]));
@@ -146,10 +171,12 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
                             stock.Change = Double.parseDouble(responseData.getString(Values[8]));
                             stock.ChangePercent = responseData.getString(Values[9]);
 
-                            if(stock!=null) {
+                            if(stock!=null && stockViewModel!=null) {
                                 if(stockViewModel.setStockList(stock)) {
                                     itemsForListView.add("$"+stock.Symbol +"\t\t\t"+stock.Price +"\t\t\tChange: "+stock.Change +"\t\t\t"+stock.ChangePercent);
+
                                     adapter.notifyDataSetChanged();
+                                   // Collections.sort(itemsForListView);
                                     stockList.setCurrentStocks(stock);
                                 }
                                 else{
