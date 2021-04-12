@@ -83,7 +83,7 @@ public  class FileHelper extends Application {
         }
         Type dataListType = new TypeToken<SettingsModel>() {
         }.getType();
-
+        br.close();
         return gson.fromJson(dataFromFile, dataListType);
     }
 
@@ -99,7 +99,7 @@ public  class FileHelper extends Application {
         dataFromFile += "]";
         Type dataListType = new TypeToken<ArrayList<History>>() {
         }.getType();
-
+        br.close();
         return gson.fromJson(dataFromFile, dataListType);
     }
 
@@ -152,7 +152,7 @@ public  class FileHelper extends Application {
         }
         Type dataListType = new TypeToken<PortfolioMoney>() {
         }.getType();
-
+        br.close();
         return gson.fromJson(dataFromFile, dataListType);
     }
 
@@ -291,7 +291,7 @@ public  class FileHelper extends Application {
         }
         Type dataListType = new TypeToken<ArrayList<PortfolioStock>>() {
         }.getType();
-
+        br.close();
         return gson.fromJson(dataFromFile, dataListType);
     }
 
