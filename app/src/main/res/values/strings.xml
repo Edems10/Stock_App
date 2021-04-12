@@ -6,6 +6,7 @@
     <string name="fragment_stock_edit_text_hint">Stock Symbol</string>
     <string name="graph_button_buy">Buy</string>
     <string name="graph_button_sell">Sell</string>
+    <string name="detail_button_predict">Predict Price</string>
     <string name="graph_text_view">Loading data…</string>
     <string name="graph_edit_text_amount">1</string>
     <string name="personal_text_history">Your History</string>

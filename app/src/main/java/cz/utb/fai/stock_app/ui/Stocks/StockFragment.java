@@ -33,14 +33,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import cz.utb.fai.stock_app.FileHelper;
 import cz.utb.fai.stock_app.Models.PortfolioStock;
 import cz.utb.fai.stock_app.Models.StockList;
-import cz.utb.fai.stock_app.ui.Graph.BarChartActivity;
+import cz.utb.fai.stock_app.ui.Detail.DetailActivity;
 import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.Models.Stock;
 
@@ -69,7 +67,7 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         listViewStocks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent I = new Intent(getActivity(), BarChartActivity.class);
+                Intent I = new Intent(getActivity(), DetailActivity.class);
                 I.putExtra("selected stock",stockViewModel.stockList.get(position));
                 getActivity().startActivity(I);
             }

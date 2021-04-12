@@ -1,10 +1,11 @@
-package cz.utb.fai.stock_app.ui.Graph;
+package cz.utb.fai.stock_app.ui.Detail;
 
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 import cz.utb.fai.stock_app.FileHelper;
 import cz.utb.fai.stock_app.Enums.Trade;
@@ -39,16 +41,16 @@ import cz.utb.fai.stock_app.Models.Stock;
 import cz.utb.fai.stock_app.Models.History;
 
 
-public class BarChartActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity {
 
     SimpleDateFormat dateFormat;
     ArrayList<String> dateBack = new ArrayList<>();
     ArrayList<String> price = new ArrayList<>();
     BarChart chart;
     JSONObject responseData;
-    Button btnBuy, btnSell;
+    Button btnBuy, btnSell,btnPredict;
     Stock stock;
-    TextView open, high, low, current, volume, change, changePercentage;
+    TextView open, high, low, current, volume, change, changePercentage, prediction;
     EditText amount;
     Calendar cal, cal2;
     FileHelper fileHelper;
@@ -56,7 +58,7 @@ public class BarChartActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.graph_stock);
+        setContentView(R.layout.activity_detail_stock);
         init();
         btnSell.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,10 +72,20 @@ public class BarChartActivity extends AppCompatActivity {
                 onBuyClick();
             }
         });
+        btnPredict.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPredictClick();
+            }
+        });
         setTextTextViews();
         getDateForAPI(35, cal);
         getIntradayData(stock.Symbol);
 
+    }
+
+    private void onPredictClick() {
+        getPredictionData(stock.Symbol);
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -88,12 +100,11 @@ public class BarChartActivity extends AppCompatActivity {
                 if (fileHelper.buyStockPortfolio(stock, Integer.valueOf(String.valueOf(amount.getText())))) {
                     fileHelper.storeToFileUserInteractions(history);
                     Toast.makeText(amount.getContext(), "You just bought:" + amount.getText() + " of " + stock.Symbol, Toast.LENGTH_SHORT).show();
-                    amount.setText("1");
                 }else {
                     Toast.makeText(amount.getContext(), "Cannot buy " + amount.getText() +" of "+stock.Symbol+
                              "- Not enough CASH", Toast.LENGTH_SHORT).show();
-                    amount.setText("1");
                 }
+                amount.setText("1");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -115,9 +126,8 @@ public class BarChartActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(amount.getContext(), "Cannot Sell " + amount.getText() +" of "+stock.Symbol+
                             "- Not enough Stock", Toast.LENGTH_SHORT).show();
-                    amount.setText("1");
                 }
-
+                amount.setText("1");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -125,6 +135,7 @@ public class BarChartActivity extends AppCompatActivity {
     }
 
     private void init() {
+        btnPredict=findViewById(R.id.buttonPredict);
         btnBuy = findViewById(R.id.buttonBuy);
         chart = findViewById(R.id.barChart);
         open = findViewById(R.id.open);
@@ -138,6 +149,7 @@ public class BarChartActivity extends AppCompatActivity {
         amount = findViewById(R.id.amount);
         fileHelper = new FileHelper();
         cal = Calendar.getInstance();
+        prediction = findViewById(R.id.prediction);
         Intent i = getIntent();
         stock = (Stock) i.getSerializableExtra("selected stock");
     }
@@ -165,6 +177,42 @@ public class BarChartActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void getPredictionData(String symbol) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&apikey=" + getString(R.string.AlphaVantageKey);
+        // works on emulator
+        String url1 ="http://10.0.2.2:8080/edems_swag/stock_api/1.0.0/prediction?ticker="+symbol;
+        //works for mobile on same network
+        String url2 ="http://10.0.0.1:8080/edems_swag/stock_api/1.0.0/prediction?ticker="+symbol;
+
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
+                new Response.Listener<String>() {
+                    @SuppressLint("DefaultLocale")
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            double temp = Double.parseDouble(jsonObject.getString("PRICE"));
+                            prediction.setVisibility(View.VISIBLE);
+                            btnPredict.setVisibility(View.INVISIBLE);
+                            prediction.setText(String.format("%.2f", temp));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     private void getIntradayData(String symbol) {

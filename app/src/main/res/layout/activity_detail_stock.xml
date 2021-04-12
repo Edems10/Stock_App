@@ -15,8 +15,8 @@
 
     <Button
         android:id="@+id/buttonBuy"
-        android:layout_width="125dp"
-        android:layout_height="62dp"
+        android:layout_width="129dp"
+        android:layout_height="36dp"
         android:text="@string/graph_button_buy"
         android:textColor="#02EE2C"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,16 +28,29 @@
 
     <Button
         android:id="@+id/buttonSell"
-        android:layout_width="125dp"
-        android:layout_height="62dp"
+        android:layout_width="126dp"
+        android:layout_height="36dp"
         android:text="@string/graph_button_sell"
         android:textColor="#B00020"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.858"
+        app:layout_constraintHorizontal_bias="0.883"
         app:layout_constraintStart_toEndOf="@+id/buttonBuy"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.976" />
+        app:layout_constraintVertical_bias="0.977" />
+
+    <Button
+        android:id="@+id/buttonPredict"
+        android:layout_width="127dp"
+        android:layout_height="35dp"
+        android:text="@string/detail_button_predict"
+        android:textColor="#B00020"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.873"
+        app:layout_constraintStart_toEndOf="@+id/low"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.931" />
 
     <TextView
         android:id="@+id/open"
@@ -71,7 +84,7 @@
         android:text="@string/graph_text_view"
         app:layout_constraintBottom_toTopOf="@+id/buttonBuy"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintHorizontal_bias="0.101"
         app:layout_constraintStart_toStartOf="@+id/barChart"
         app:layout_constraintTop_toBottomOf="@+id/barChart"
         app:layout_constraintVertical_bias="1.0" />
@@ -119,19 +132,32 @@
         android:text="@string/graph_text_view"
         app:layout_constraintBottom_toTopOf="@+id/buttonSell"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.862"
+        app:layout_constraintHorizontal_bias="0.863"
         app:layout_constraintStart_toEndOf="@+id/open"
         app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="0.74" />
+        app:layout_constraintVertical_bias="0.824" />
+
+    <TextView
+        android:id="@+id/prediction"
+        android:layout_width="125dp"
+        android:layout_height="35dp"
+        android:visibility="invisible"
+        android:text="@string/graph_text_view"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSell"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.886"
+        app:layout_constraintStart_toEndOf="@+id/open"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/amount"
-        android:layout_width="30dp"
-        android:layout_height="62dp"
+        android:layout_width="74dp"
+        android:layout_height="41dp"
         android:gravity="center"
+        android:importantForAutofill="no"
         android:inputType="numberDecimal"
         android:text="@string/graph_edit_text_amount"
-        android:importantForAutofill="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonSell"
         app:layout_constraintHorizontal_bias="0.45"
