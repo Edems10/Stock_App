@@ -1,6 +1,7 @@
 package cz.utb.fai.stock_app;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Environment;
 
 import com.google.gson.Gson;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -25,20 +27,23 @@ import cz.utb.fai.stock_app.Models.History;
 public  class FileHelper extends Application {
 
     final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
-    final static String applicationDirectory = "/StockApp/";
-    final static String fileNameMoney = "/money";
-    final static String fileNameHistory = "/history";
-    final static String fileNamePortfolio = "/portfolio";
-    final static String pathToDir = pathToStorage + applicationDirectory;
-    final static String fullPathToMoney = pathToStorage + applicationDirectory + fileNameMoney;
-    final static String fullPathToHistory = pathToStorage + applicationDirectory + fileNameHistory;
-    final static String fullPathToPortfolio = pathToStorage + applicationDirectory + fileNamePortfolio;
+    final static String fileNameMoney = "money";
+    final static String fileNameHistory = "history";
+    final static String fileNamePortfolio = "portfolio";
+    private Context context;
+    File dir;
+
+    public FileHelper(Context context) {
+        this.context = context;
+        this.dir = new File(context.getFilesDir(),"");;
+    }
 
 
 
     public List<History> loadFromFileUserInteractions() throws IOException {
         Gson gson = new Gson();
-        BufferedReader br = new BufferedReader(new FileReader(fullPathToHistory));
+        File file = new File(dir, fileNameHistory);
+        BufferedReader br = new BufferedReader(new FileReader(file));
         String line = "";
         String dataFromFile = "[";
         while ((line = br.readLine()) != null) {
@@ -54,7 +59,7 @@ public  class FileHelper extends Application {
     public void storeToFileUserInteractions(History history) throws IOException {
         Gson gson = new Gson();
         String userInteractionsToJson = gson.toJson(history);
-        File file = new File(fullPathToHistory);
+        File file = new File(dir, fileNameHistory);
         if(file.length()!=0)
         {
             //adding "," if the file contains other userinteracitons
@@ -64,7 +69,7 @@ public  class FileHelper extends Application {
         }
 
             try {
-                FileOutputStream fos = new FileOutputStream(fullPathToHistory, true);
+                FileOutputStream fos = new FileOutputStream(file, true);
 
                 fos.write(userInteractionsToJson.getBytes());
                 fos.flush();
@@ -78,9 +83,9 @@ public  class FileHelper extends Application {
     private void createFakeMoney(PortfolioMoney portfolioMoney)throws IOException{
         Gson gson = new Gson();
         String settingsToJson = gson.toJson(portfolioMoney);
-
+        File file = new File(dir, fileNameMoney);
         try {
-            FileOutputStream fos = new FileOutputStream(fullPathToMoney, false);
+            FileOutputStream fos = new FileOutputStream(file, false);
             fos.write(settingsToJson.getBytes());
             fos.flush();
             fos.close();
@@ -92,7 +97,8 @@ public  class FileHelper extends Application {
     //loads current amount and currency from file
     public PortfolioMoney loadCurrentMoney() throws IOException {
         Gson gson = new Gson();
-        BufferedReader br = new BufferedReader(new FileReader(fullPathToMoney));
+        File file = new File(dir, fileNameMoney);
+        BufferedReader br = new BufferedReader(new FileReader(file));
         String line = "";
         String dataFromFile ="";
         while ((line = br.readLine()) != null) {
@@ -109,6 +115,7 @@ public  class FileHelper extends Application {
     //portfolioMoney - current value of accnount
     public void editMoney(double value, Trade trade,PortfolioMoney portfolioMoney) throws IOException {
         Gson gson = new Gson();
+        File file = new File(dir, fileNameMoney);
         String newJson=null;
         if(trade.equals(Trade.SELL))
         {
@@ -122,7 +129,7 @@ public  class FileHelper extends Application {
             newJson = gson.toJson(portfolioMoney);
         }
         try {
-            FileOutputStream fos = new FileOutputStream(fullPathToMoney, false);
+            FileOutputStream fos = new FileOutputStream(file, false);
             fos.write(newJson.getBytes());
             fos.flush();
             fos.close();
@@ -140,12 +147,8 @@ public  class FileHelper extends Application {
             editMoney(priceOfTrade,Trade.SELL,portfolioMoney);
             return true;
         }
-
         return false;
     }
-
-
-
 
     public boolean buyStockPortfolio(Stock stock,int amount)throws IOException {
         PortfolioMoney portfolioMoney = loadCurrentMoney();
@@ -216,9 +219,10 @@ public  class FileHelper extends Application {
     //stores Portfolio Stock to File
     public void storeToPortfolio(List<PortfolioStock> portfolioStockList) throws IOException {
         Gson gson = new Gson();
+        File file = new File(dir, fileNamePortfolio);
         String userInteractionsToJson = gson.toJson(portfolioStockList);
         try {
-            FileOutputStream fos = new FileOutputStream(fullPathToPortfolio, false);
+            FileOutputStream fos = new FileOutputStream(file, false);
             fos.write(userInteractionsToJson.getBytes());
             fos.flush();
             fos.close();
@@ -231,7 +235,8 @@ public  class FileHelper extends Application {
     //loads file to arrayList
     public ArrayList<PortfolioStock> loadFromPortfolio() throws IOException {
         Gson gson = new Gson();
-        BufferedReader br = new BufferedReader(new FileReader(fullPathToPortfolio));
+        File file = new File(dir, fileNamePortfolio);
+        BufferedReader br = new BufferedReader(new FileReader(file));
         String line = "";
         String dataFromFile="";
         while ((line = br.readLine()) != null) {
@@ -244,23 +249,13 @@ public  class FileHelper extends Application {
     }
 
 
-    //creates directory if doesn't exist
-    public void checkDirectoryExists() {
-
-            File file = new File(pathToDir);
-            if (!file.exists()) {
-                file.mkdir();
-            }
-
-    }
 
 
     //creates default file with money
     public void checkMoneyExists() {
-        File file = new File(fullPathToMoney);
+        File file = new File(dir, fileNameMoney);
         if (!file.exists()) {
             try {
-                file.createNewFile();
                 PortfolioMoney portfolioMoney = new PortfolioMoney(10000.0,"$");
                 createFakeMoney(portfolioMoney);
             } catch (IOException e) {
@@ -269,8 +264,10 @@ public  class FileHelper extends Application {
         }
     }
 
+
+
     public void checkHistoryExists() {
-        File file = new File(fullPathToHistory);
+        File file = new File(dir, fileNameHistory);
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -283,13 +280,19 @@ public  class FileHelper extends Application {
 
 
     public void checkPortfolioExists() {
-        File file = new File(fullPathToPortfolio);
+        File file = new File(dir, fileNamePortfolio);
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void checkdirExists() {
+        if(!dir.exists()){
+            dir.mkdir();
         }
     }
 }

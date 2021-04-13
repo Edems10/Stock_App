@@ -1,5 +1,6 @@
 package cz.utb.fai.stock_app.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -20,13 +21,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //todo oznamit userovi ze nemam prava zapisovat do file
-        FileHelper fileHelper =new FileHelper();
-        fileHelper.checkDirectoryExists();
+
+
+        FileHelper fileHelper =new FileHelper(getApplicationContext());
+        fileHelper.checkdirExists();
         fileHelper.checkMoneyExists();
         fileHelper.checkHistoryExists();
         fileHelper.checkPortfolioExists();
-
 
 
         setTheme(R.style.AppTheme);

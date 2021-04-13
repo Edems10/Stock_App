@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,7 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
     Stock stock =null;
     ArrayAdapter<String> adapter;
     StockList stockList;
-    FileHelper fileHelper =new FileHelper();
+    FileHelper fileHelper;
     ArrayList<PortfolioStock> portfolioStocks = new ArrayList<>();
     List<String> symbols = new ArrayList<>();
 
@@ -84,9 +85,31 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
         stockList=StockList.getInstance();
         txt = view.findViewById(R.id.editTextStockList);
         txt.setOnClickListener(this);
+        // pri stisknuti enter se callne volani stejne jako pri clicku buttonu ADD
+        txt.setOnKeyListener(new View.OnKeyListener()
+        {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            GetSymbolBasicInfo(txt.getText().toString());
+                            txt.getText().clear();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
         bt= view.findViewById(R.id.buttonAddStockToList);
         bt.setOnClickListener(this);
         context = getContext();
+        fileHelper =new FileHelper(context.getApplicationContext());
         listViewStocks = view.findViewById(R.id.listViewStocks);
         adapter = new ArrayAdapter<>(context,android.R.layout.simple_selectable_list_item,itemsForListView);
         listViewStocks.setAdapter(adapter);

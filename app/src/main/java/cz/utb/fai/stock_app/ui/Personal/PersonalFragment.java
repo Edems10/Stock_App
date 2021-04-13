@@ -96,7 +96,7 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initModels() {
-        fileHelper = new FileHelper();
+        fileHelper = new FileHelper(context.getApplicationContext());
         stockList = StockList.getInstance();
     }
 

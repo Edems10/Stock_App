@@ -149,7 +149,7 @@ public class DetailActivity extends AppCompatActivity {
         btnSell = findViewById(R.id.buttonSell);
         changePercentage = findViewById(R.id.changePercentage);
         amount = findViewById(R.id.amount);
-        fileHelper = new FileHelper();
+        fileHelper = new FileHelper(getApplicationContext());
         cal = Calendar.getInstance();
         prediction = findViewById(R.id.prediction);
         Intent i = getIntent();
@@ -265,11 +265,16 @@ public class DetailActivity extends AppCompatActivity {
             if (stock.Change <= 0)
                 barDataSet.setColor(Color.rgb(255, 20, 20));
             else
-                barDataSet.setColor(Color.rgb(50, 255, 50));
+                barDataSet.setColor(Color.rgb(50, 255, 100));
             barDataSet.setValueTextSize(16f);
             BarData barData = new BarData(barDataSet);
             chart.setFitBars(true);
             chart.setData(barData);
+            chart.setDrawValueAboveBar(false);
+            chart.isDrawBordersEnabled();
+            chart.setMaxVisibleValueCount(10);
+            chart.setNoDataText("Couldn't load data from Server");
+            chart.setDrawBarShadow(true);
             chart.getDescription().setText("Last " + price.size() + " Trading days");
             chart.animateY(800);
         }
