@@ -18,7 +18,6 @@ import java.util.List;
 
 import cz.utb.fai.stock_app.Models.PortfolioMoney;
 import cz.utb.fai.stock_app.Models.PortfolioStock;
-import cz.utb.fai.stock_app.Models.SettingsModel;
 import cz.utb.fai.stock_app.Models.Stock;
 import cz.utb.fai.stock_app.Enums.Trade;
 import cz.utb.fai.stock_app.Models.History;
@@ -27,65 +26,14 @@ public  class FileHelper extends Application {
 
     final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
     final static String applicationDirectory = "/StockApp/";
-    final static String fileNameSetting = "/settings";
     final static String fileNameMoney = "/money";
     final static String fileNameHistory = "/history";
     final static String fileNamePortfolio = "/portfolio";
     final static String pathToDir = pathToStorage + applicationDirectory;
-    final static String fullPathToSetting = pathToStorage + applicationDirectory + fileNameSetting;
     final static String fullPathToMoney = pathToStorage + applicationDirectory + fileNameMoney;
     final static String fullPathToHistory = pathToStorage + applicationDirectory + fileNameHistory;
     final static String fullPathToPortfolio = pathToStorage + applicationDirectory + fileNamePortfolio;
 
-
-
-    private void createSettings(SettingsModel settingsModel) throws IOException {
-        Gson gson = new Gson();
-        String settingsToJson = gson.toJson(settingsModel);
-
-        File file = new File(fullPathToSetting);
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-            try {
-                FileOutputStream fos = new FileOutputStream(fullPathToSetting, false);
-                fos.write(settingsToJson.getBytes());
-                fos.flush();
-                fos.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // upravene netestovane
-    public void updateSettings(SettingsModel settingsModel) throws IOException {
-        Gson gson = new Gson();
-        String settingsToJson = gson.toJson(settingsModel);
-        try {
-
-            FileOutputStream fos = new FileOutputStream(fullPathToSetting, false);
-            fos.write(settingsToJson.getBytes());
-            fos.flush();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public SettingsModel loadFromSettings() throws IOException {
-        Gson gson = new Gson();
-        BufferedReader br = new BufferedReader(new FileReader(fullPathToSetting));
-        String line = "";
-        String dataFromFile ="";
-        while ((line = br.readLine()) != null) {
-            dataFromFile += line;
-        }
-        Type dataListType = new TypeToken<SettingsModel>() {
-        }.getType();
-        br.close();
-        return gson.fromJson(dataFromFile, dataListType);
-    }
 
 
     public List<History> loadFromFileUserInteractions() throws IOException {
@@ -332,18 +280,7 @@ public  class FileHelper extends Application {
         }
     }
 
-    public void checkSettingsExists() {
-        File file = new File(fullPathToSetting);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-                SettingsModel settingsModel = new SettingsModel("Free",1200,"AlphaVantage");
-                createSettings(settingsModel);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+
 
     public void checkPortfolioExists() {
         File file = new File(fullPathToPortfolio);

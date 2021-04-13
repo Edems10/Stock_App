@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:windowSoftInputMode="adjustResize"
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/splashScreenTheme"
@@ -25,7 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.Detail.DetailActivity">
+        <activity android:name=".ui.Detail.DetailActivity"
+            android:windowSoftInputMode="adjustResize">
+
         </activity>
     </application
         >

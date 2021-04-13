@@ -79,12 +79,13 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
         setTextTextViews();
-        getDateForAPI(35, cal);
-        getIntradayData(stock.Symbol);
 
     }
 
     private void onPredictClick() {
+        btnPredict.setVisibility(View.INVISIBLE);
+        prediction.setText("This may take a while come back later");
+        prediction.setVisibility(View.VISIBLE);
         getPredictionData(stock.Symbol);
     }
 
@@ -135,6 +136,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void init() {
+
         btnPredict=findViewById(R.id.buttonPredict);
         btnBuy = findViewById(R.id.buttonBuy);
         chart = findViewById(R.id.barChart);
@@ -152,6 +154,8 @@ public class DetailActivity extends AppCompatActivity {
         prediction = findViewById(R.id.prediction);
         Intent i = getIntent();
         stock = (Stock) i.getSerializableExtra("selected stock");
+        getDateForAPI(35, cal);
+        getIntradayData(stock.Symbol);
     }
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
@@ -187,7 +191,6 @@ public class DetailActivity extends AppCompatActivity {
         //works for mobile on same network
         String url2 ="http://10.0.0.1:8080/edems_swag/stock_api/1.0.0/prediction?ticker="+symbol;
 
-        // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
                 new Response.Listener<String>() {
                     @SuppressLint("DefaultLocale")
@@ -196,8 +199,6 @@ public class DetailActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             double temp = Double.parseDouble(jsonObject.getString("PRICE"));
-                            prediction.setVisibility(View.VISIBLE);
-                            btnPredict.setVisibility(View.INVISIBLE);
                             prediction.setText(String.format("%.2f", temp));
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -210,20 +211,17 @@ public class DetailActivity extends AppCompatActivity {
 
                     }
                 });
-
-        // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
 
     private void getIntradayData(String symbol) {
-        RequestQueue queue = Volley.newRequestQueue(this);
+        RequestQueue queueIntra = Volley.newRequestQueue(this);
         //     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&apikey=" + getString(R.string.AlphaVantageKey);
         // works on emulator
         String url1 ="http://10.0.2.2:8080/edems_swag/stock_api/1.0.0/history?ticker="+symbol;
         //works for mobile on same network
         String url2 ="http://10.0.0.1:8080/edems_swag/stock_api/1.0.0/history?ticker="+symbol;
 
-        // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
                 new Response.Listener<String>() {
                     @Override
@@ -233,7 +231,6 @@ public class DetailActivity extends AppCompatActivity {
                             responseData = jsonObject.getJSONObject("Time Series (Daily)");
                             JSONObject responseData2 = null;
                             for (int i = 0; i < dateBack.size(); i++) {
-
                                 try {
                                     responseData2 = responseData.getJSONObject(dateBack.get(i));
                                     price.add(responseData2.getString("5. adjusted close"));
@@ -243,6 +240,7 @@ public class DetailActivity extends AppCompatActivity {
                             }
                             createGraph(price);
                         } catch (JSONException e) {
+                            Log.i("foos","JSONException - "+e);
                             e.printStackTrace();
                         }
                     }
@@ -250,12 +248,10 @@ public class DetailActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Log.i("foos","VolleyError - "+error);
                     }
                 });
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        queueIntra.add(stringRequest);
     }
 
     private void createGraph(ArrayList<String> temp) {
@@ -278,5 +274,4 @@ public class DetailActivity extends AppCompatActivity {
             chart.animateY(800);
         }
     }
-
 }

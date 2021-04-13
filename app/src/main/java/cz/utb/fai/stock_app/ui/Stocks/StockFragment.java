@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -64,14 +65,16 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
     {
         View view = inflater.inflate(R.layout.fragment_stock, container, false);
         initUI(view);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+
         listViewStocks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent I = new Intent(getActivity(), DetailActivity.class);
                 I.putExtra("selected stock",stockViewModel.stockList.get(position));
                 getActivity().startActivity(I);
-            }
-        });
+            }});
         return view;
     }
 
@@ -125,9 +128,10 @@ public class StockFragment extends Fragment implements View.OnClickListener, Ser
 
     public void onClick(View v)
     {
-        if(R.id.buttonAddStockToList ==v.getId())
-      GetSymbolBasicInfo(txt.getText().toString());
-
+        if(R.id.buttonAddStockToList ==v.getId()) {
+            GetSymbolBasicInfo(txt.getText().toString());
+            txt.getText().clear();
+        }
        else if(R.id.editTextStockList ==v.getId())
             txt.getText().clear();
     }

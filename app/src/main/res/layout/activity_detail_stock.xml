@@ -1,168 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barChart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="250dp"
-        />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline72_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonBuy"
-        android:layout_width="129dp"
-        android:layout_height="36dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:text="@string/graph_button_buy"
-        android:textColor="#02EE2C"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.976" />
+        android:textColor="#278838"
+        app:layout_constraintBottom_toTopOf="@+id/guideline99_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline35_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline5_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline92_horizontal" />
 
     <Button
         android:id="@+id/buttonSell"
-        android:layout_width="126dp"
-        android:layout_height="36dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:text="@string/graph_button_sell"
         android:textColor="#B00020"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.883"
-        app:layout_constraintStart_toEndOf="@+id/buttonBuy"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.977" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline99_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline95_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline65_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline92_horizontal" />
 
     <Button
         android:id="@+id/buttonPredict"
-        android:layout_width="127dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
         android:text="@string/detail_button_predict"
-        android:textColor="#B00020"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.873"
-        app:layout_constraintStart_toEndOf="@+id/low"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.931" />
+        android:textColor="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/guideline92_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline95_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline65_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline87_horizontal" />
 
     <TextView
         android:id="@+id/open"
-        android:layout_width="125dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
         android:text="@string/graph_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/high"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintStart_toStartOf="@+id/barChart"
-        app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline82_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline35_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline5_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline77_horizontal" />
 
     <TextView
         android:id="@+id/high"
-        android:layout_width="125dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
         android:text="@string/graph_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/low"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintStart_toStartOf="@+id/barChart"
-        app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline87_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline35_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline5_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline82_horizontal" />
 
     <TextView
         android:id="@+id/low"
-        android:layout_width="125dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="132dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
         android:text="@string/graph_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/buttonBuy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.101"
-        app:layout_constraintStart_toStartOf="@+id/barChart"
-        app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline92_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline35_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline5_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline87_horizontal" />
 
     <TextView
         android:id="@+id/current"
-        android:layout_width="125dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
         android:text="@string/graph_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/open"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintStart_toStartOf="@+id/barChart"
-        app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline77_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline35_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline5_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline72_horizontal" />
 
     <TextView
         android:id="@+id/volume"
-        android:layout_width="125dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
         android:text="@string/graph_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/change"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.862"
-        app:layout_constraintStart_toEndOf="@+id/open"
-        app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline77_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline95_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline65_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline72_horizontal" />
 
     <TextView
         android:id="@+id/change"
-        android:layout_width="125dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
         android:text="@string/graph_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/changePercentage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.862"
-        app:layout_constraintStart_toEndOf="@+id/open"
-        app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline82_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline95_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline65_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline77_horizontal" />
 
     <TextView
         android:id="@+id/changePercentage"
-        android:layout_width="125dp"
-        android:layout_height="35dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
         android:text="@string/graph_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSell"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.863"
-        app:layout_constraintStart_toEndOf="@+id/open"
-        app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="0.824" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline87_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline95_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline65_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline82_horizontal" />
 
     <TextView
         android:id="@+id/prediction"
-        android:layout_width="125dp"
-        android:layout_height="35dp"
-        android:visibility="invisible"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:text="@string/graph_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSell"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.886"
-        app:layout_constraintStart_toEndOf="@+id/open"
-        app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="1.0" />
+        android:visibility="invisible"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guideline92_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline95_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline65_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline87_horizontal" />
 
     <EditText
         android:id="@+id/amount"
-        android:layout_width="74dp"
-        android:layout_height="41dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:gravity="center"
         android:importantForAutofill="no"
         android:inputType="numberDecimal"
         android:text="@string/graph_edit_text_amount"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonSell"
-        app:layout_constraintHorizontal_bias="0.45"
-        app:layout_constraintStart_toEndOf="@+id/buttonBuy"
-        app:layout_constraintTop_toBottomOf="@+id/barChart"
-        app:layout_constraintVertical_bias="0.914" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline99_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline65_vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline35_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline92_horizontal" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline95_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline99_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.99" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline92_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.92" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline87_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.87" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline82_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.82" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline77_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.77" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline72_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.72" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline35_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.35" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline65_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.65" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
