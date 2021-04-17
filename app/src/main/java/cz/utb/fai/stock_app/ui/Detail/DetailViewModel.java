@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +40,7 @@ import cz.utb.fai.stock_app.models.Stock;
 
 public class DetailViewModel extends ViewModel {
     private FileHelper fileHelper;
-    Context context;
+    private Context context;
     private Calendar cal2;
     private SimpleDateFormat dateFormat;
     private ArrayList<String> dateBack = new ArrayList<>();
@@ -48,17 +49,17 @@ public class DetailViewModel extends ViewModel {
     private RequestQueue queue ;
     private HistoryGraph historyGraph;
     private Prediction prediction;
-    private boolean called;
-    TextView current,open,high, low,volume, change, changePercentage;
+    @SuppressLint("StaticFieldLeak")
+    private TextView current,open,high, low,volume, change, changePercentage, predictionA,predictionP,predictionE,predictionD;
+    private ProgressBar progressBar;
 
-    public void init(Context context, Stock stock,TextView current,TextView open,TextView high,TextView low,TextView volume,TextView change,TextView changePercentage) {
+    public void init(Context context, Stock stock, TextView current, TextView open, TextView high, TextView low, TextView volume, TextView change, TextView changePercentage, TextView predictionAverage, TextView predictionDate, TextView predictionError, TextView predictionPrice, ProgressBar progressBar) {
         historyGraph = new HistoryGraph();
         prediction = new Prediction();
         fileHelper = new FileHelper(context);
         this.context = context;
         this.stock = stock;
         queue = Volley.newRequestQueue(context);
-        called=false;
         this.current=current;
         this.open=open;
         this.high=high;
@@ -66,6 +67,11 @@ public class DetailViewModel extends ViewModel {
         this.volume=volume;
         this.change=change;
         this.changePercentage=changePercentage;
+        predictionA=predictionAverage;
+        predictionE=predictionError;
+        predictionP=predictionPrice;
+        predictionD=predictionDate;
+        this.progressBar=progressBar;
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -135,14 +141,14 @@ public class DetailViewModel extends ViewModel {
         changePercentage.setText("Change: " + stock.getChangePercent());
     }
 
-    public void getPredictionData( final TextView textView) {
+    public void getPredictionData() {
 
         //     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&apikey=" + getString(R.string.AlphaVantageKey);
         // works on emulator
         String url1 = "http://10.0.2.2:8080/edems_swag/stock_api/1.0.0/prediction?ticker=" + stock.getSymbol();
         //works for mobile on same network
         String url2 = "http://10.0.0.1:8080/edems_swag/stock_api/1.0.0/prediction?ticker=" + stock.getSymbol();
-
+        progressBar.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
                 new Response.Listener<String>() {
                     @SuppressLint("DefaultLocale")
@@ -170,13 +176,28 @@ public class DetailViewModel extends ViewModel {
         queue.add(stringRequest);
     }
 
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     private void setTextPrediction(Prediction prediction) {
-        current.setText(String.format("Predicted Price: %.2f", prediction.getPrice()));
+        progressBar.setVisibility(View.INVISIBLE);
+        predictionP.setVisibility(View.VISIBLE);
+        predictionP.setText(String.format("%.2f", prediction.getPrice()));
+        current.setText("Predicted price: ");
+
         String formater = prediction.getDate();
         formater = formater.substring(0,10);
-        open.setText(String.format("Date of Prediction: %10s", formater));
-        high.setText(String.format("Avarage Error of prediction: %.2f", prediction.getMean_ab_er()));
-        low.setText(String.format("Accuracy of prediction: %.2f", prediction.getAccuracy()*100));
+        open.setText("Date of Prediction:");
+        predictionD.setVisibility(View.VISIBLE);
+        predictionD.setText(formater);
+
+        predictionA.setVisibility(View.VISIBLE);
+        predictionA.setText(String.format(" %.2f", prediction.getMean_ab_er()));
+        high.setText("Average Error:");
+
+        formater = String.format("%.2f", prediction.getAccuracy()*100)+"%";
+        predictionE.setVisibility(View.VISIBLE);
+        predictionE.setText(formater);
+        low.setText("Accuracy :");
+
         change.setVisibility(View.INVISIBLE);
         changePercentage.setVisibility(View.INVISIBLE);
         volume.setVisibility(View.INVISIBLE);

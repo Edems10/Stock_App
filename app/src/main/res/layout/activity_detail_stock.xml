@@ -126,17 +126,6 @@
         app:layout_constraintStart_toStartOf="@+id/guideline65_vertical"
         app:layout_constraintTop_toTopOf="@+id/guideline82_horizontal" />
 
-    <TextView
-        android:id="@+id/prediction"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/graph_text_view"
-        android:visibility="invisible"
-        android:gravity="center_vertical"
-        app:layout_constraintBottom_toTopOf="@+id/guideline92_horizontal"
-        app:layout_constraintEnd_toStartOf="@+id/guideline95_vertical"
-        app:layout_constraintStart_toStartOf="@+id/guideline65_vertical"
-        app:layout_constraintTop_toTopOf="@+id/guideline87_horizontal" />
 
     <EditText
         android:id="@+id/amount"
@@ -219,5 +208,65 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.65" />
+
+    <TextView
+        android:id="@+id/predictionPrice"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text=""
+        android:visibility="invisible"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guideline77_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline65_vertical"
+        app:layout_constraintStart_toEndOf="@+id/guideline35_vertical"
+        app:layout_constraintTop_toBottomOf="@+id/barChart"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/predictionDate"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text=""
+        android:visibility="invisible"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/predictionAvarage"
+        app:layout_constraintEnd_toStartOf="@+id/change"
+        app:layout_constraintStart_toEndOf="@+id/guideline35_vertical"
+        app:layout_constraintTop_toBottomOf="@+id/predictionPrice" />
+
+    <TextView
+        android:id="@+id/predictionAvarage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text=""
+        android:visibility="invisible"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guideline87_horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/changePercentage"
+        app:layout_constraintStart_toEndOf="@+id/guideline35_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline82_horizontal" />
+
+    <TextView
+        android:id="@+id/predictionError"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text=""
+        android:visibility="invisible"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/amount"
+        app:layout_constraintEnd_toStartOf="@+id/guideline65_vertical"
+        app:layout_constraintStart_toEndOf="@+id/guideline35_vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline87_horizontal" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSell"
+        app:layout_constraintEnd_toEndOf="@+id/buttonPredict"
+        app:layout_constraintStart_toStartOf="@+id/buttonPredict"
+        app:layout_constraintTop_toTopOf="@+id/guideline87_horizontal" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

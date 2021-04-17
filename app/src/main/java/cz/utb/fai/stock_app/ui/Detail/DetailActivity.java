@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,11 +21,12 @@ import cz.utb.fai.stock_app.models.Stock;
 
 public class DetailActivity extends AppCompatActivity {
 
-    BarChart chart;
-    Button btnBuy, btnSell,btnPredict;
-    Stock stock;
-    TextView open, high, low, current, volume, change, changePercentage, prediction;
-    EditText amount;
+    private BarChart chart;
+    private Button btnBuy, btnSell,btnPredict;
+    private Stock stock;
+    private TextView open, high, low, current, volume, change, changePercentage, predictionPrice,predictionDate,predictionError, predictionAverage;
+    private EditText amount;
+    private ProgressBar progressBar;
     DetailViewModel detailViewModel;
 
     @Override
@@ -54,17 +56,13 @@ public class DetailActivity extends AppCompatActivity {
 
     private void onPredictClick() {
         btnPredict.setVisibility(View.INVISIBLE);
-        prediction.setText("This may take a while come back later");
-        prediction.setVisibility(View.VISIBLE);
-        detailViewModel.getPredictionData(prediction);
+        detailViewModel.getPredictionData();
     }
 
-    @SuppressLint("SimpleDateFormat")
     private void onBuyClick() {
         detailViewModel.onBuyClicked(amount);
     }
 
-    @SuppressLint("SimpleDateFormat")
     private void onSellClick() {
         detailViewModel.onSellClicked(amount);
     }
@@ -84,10 +82,14 @@ public class DetailActivity extends AppCompatActivity {
         btnSell = findViewById(R.id.buttonSell);
         changePercentage = findViewById(R.id.changePercentage);
         amount = findViewById(R.id.amount);
-        prediction = findViewById(R.id.prediction);
+        predictionAverage = findViewById(R.id.predictionAvarage);
+        predictionDate = findViewById(R.id.predictionDate);
+        predictionError = findViewById(R.id.predictionError);
+        predictionPrice = findViewById(R.id.predictionPrice);
+        progressBar=findViewById(R.id.progressBar);
         Intent i = getIntent();
         stock = (Stock) i.getSerializableExtra("selected stock");
-        detailViewModel.init(this,stock,current,open,high,low,volume,change,changePercentage);
+        detailViewModel.init(this,stock,current,open,high,low,volume,change,changePercentage,predictionAverage,predictionDate,predictionError,predictionPrice,progressBar);
         detailViewModel.getIntradayData(chart);
         detailViewModel.setTextTextViews();
 
