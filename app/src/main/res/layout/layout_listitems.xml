@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_layout">
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline95vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline50vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.50" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline27vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.275" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline72vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.725" />
+
+    <TextView
+        android:id="@+id/textTickerList"
+        android:textSize="20sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/ticker"
+        android:textColor="#000000"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/guideline17horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline27vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline5vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline12horizontal" />
+
+    <TextView
+        android:id="@+id/textPriceList"
+        android:textSize="20sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:gravity="center_horizontal"
+        android:text="@string/price"
+        app:layout_constraintBottom_toTopOf="@+id/guideline17horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline50vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline27vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline12horizontal" />
+
+    <TextView
+        android:id="@+id/textChangeList"
+        android:textSize="20sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:gravity="center_horizontal"
+        android:text="@string/Change"
+        app:layout_constraintBottom_toTopOf="@+id/guideline17horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline72vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline50vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline12horizontal" />
+
+    <TextView
+        android:id="@+id/textChangePercentageList"
+        android:textSize="20sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:gravity="center_horizontal"
+        android:text="@string/ChangePercentage"
+        app:layout_constraintBottom_toTopOf="@+id/guideline17horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline95vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline72vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline12horizontal" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

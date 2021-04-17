@@ -1,6 +1,5 @@
 package cz.utb.fai.stock_app.ui;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -8,10 +7,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import cz.utb.fai.stock_app.FileHelper;
+import cz.utb.fai.stock_app.fileH.FileHelper;
 import cz.utb.fai.stock_app.R;
 
 public class MainActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package cz.utb.fai.stock_app;
+package cz.utb.fai.stock_app.fileH;
 
 import android.app.Application;
 import android.content.Context;
@@ -12,17 +12,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.utb.fai.stock_app.Models.PortfolioMoney;
-import cz.utb.fai.stock_app.Models.PortfolioStock;
-import cz.utb.fai.stock_app.Models.Stock;
-import cz.utb.fai.stock_app.Enums.Trade;
-import cz.utb.fai.stock_app.Models.History;
+import cz.utb.fai.stock_app.models.PortfolioMoney;
+import cz.utb.fai.stock_app.models.PortfolioStock;
+import cz.utb.fai.stock_app.models.Stock;
+import cz.utb.fai.stock_app.enums.Trade;
+import cz.utb.fai.stock_app.models.History;
 
 public  class FileHelper extends Application {
 
@@ -30,11 +29,9 @@ public  class FileHelper extends Application {
     final static String fileNameMoney = "money";
     final static String fileNameHistory = "history";
     final static String fileNamePortfolio = "portfolio";
-    private Context context;
     File dir;
 
     public FileHelper(Context context) {
-        this.context = context;
         this.dir = new File(context.getFilesDir(),"");;
     }
 
@@ -140,7 +137,7 @@ public  class FileHelper extends Application {
 
     public boolean sellStockPortfolio(Stock stock,int amount)throws IOException{
 
-        double priceOfTrade = stock.Price*amount;
+        double priceOfTrade = stock.getPrice()*amount;
         PortfolioMoney portfolioMoney=loadCurrentMoney();
         if(sellStockAddToPortfolio(stock,amount))
         {
@@ -152,7 +149,7 @@ public  class FileHelper extends Application {
 
     public boolean buyStockPortfolio(Stock stock,int amount)throws IOException {
         PortfolioMoney portfolioMoney = loadCurrentMoney();
-        double priceOfTrade = stock.Price * amount;
+        double priceOfTrade = stock.getPrice() * amount;
         if ((portfolioMoney.getAmount() - priceOfTrade >= 0))
         {
             editMoney(priceOfTrade,Trade.BUY,portfolioMoney);
@@ -172,12 +169,12 @@ public  class FileHelper extends Application {
         for(int i=0;i<portfolioStockList.size();i++)
         {
             PortfolioStock portfolioStock = portfolioStockList.get(i);
-            if(stock.Symbol.equals(portfolioStock.getTicker()))
+            if(stock.getSymbol().equals(portfolioStock.getTicker()))
             {
                 currentAmount = portfolioStock.getAmount();
                 currentAveragePrice=portfolioStock.getAveragePrice();
                     int newAmount =currentAmount+amount;
-                    double newAveragePrice  =((currentAmount*currentAveragePrice)+(amount*stock.Price))/newAmount;
+                    double newAveragePrice  =((currentAmount*currentAveragePrice)+(amount*stock.getPrice()))/newAmount;
                     portfolioStock.setAmount(newAmount);
                     portfolioStock.setAveragePrice(newAveragePrice);
                     portfolioStockList.set(i,portfolioStock);
@@ -187,7 +184,7 @@ public  class FileHelper extends Application {
             }
         }
         if(!found){
-            PortfolioStock portfolioStock = new PortfolioStock(stock.Symbol,amount,stock.Price);
+            PortfolioStock portfolioStock = new PortfolioStock(stock.getSymbol(),amount,stock.getPrice());
             portfolioStockList.add(portfolioStock);
         }
         storeToPortfolio(portfolioStockList);
@@ -201,7 +198,7 @@ public  class FileHelper extends Application {
         for(int i=0;i<portfolioStockList.size();i++)
         {
             PortfolioStock portfolioStock = portfolioStockList.get(i);
-            if(stock.Symbol.equals(portfolioStock.getTicker()))
+            if(stock.getSymbol().equals(portfolioStock.getTicker()))
             {
                 currentAmount = portfolioStock.getAmount();
                     int newAmount =currentAmount-amount;
@@ -249,8 +246,6 @@ public  class FileHelper extends Application {
     }
 
 
-
-
     //creates default file with money
     public void checkMoneyExists() {
         File file = new File(dir, fileNameMoney);
@@ -265,7 +260,6 @@ public  class FileHelper extends Application {
     }
 
 
-
     public void checkHistoryExists() {
         File file = new File(dir, fileNameHistory);
         if (!file.exists()) {
@@ -276,7 +270,6 @@ public  class FileHelper extends Application {
             }
         }
     }
-
 
 
     public void checkPortfolioExists() {

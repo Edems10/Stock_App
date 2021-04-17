@@ -1,4 +1,4 @@
-package cz.utb.fai.stock_app.Models;
+package cz.utb.fai.stock_app.models;
 
 public class PortfolioMoney {
     public PortfolioMoney(Double amount, String currency) {

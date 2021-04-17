@@ -1,6 +1,6 @@
-package cz.utb.fai.stock_app.Models;
+package cz.utb.fai.stock_app.models;
 
-import cz.utb.fai.stock_app.Enums.Trade;
+import cz.utb.fai.stock_app.enums.Trade;
 
 public class History {
 

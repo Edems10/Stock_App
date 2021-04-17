@@ -1,4 +1,4 @@
-package cz.utb.fai.stock_app.Models;
+package cz.utb.fai.stock_app.models;
 
 public class StockProfit {
     public StockProfit(String symbol, int amount, double averagePrice, double currentPrice, float percentageChange, double profit, double value) {

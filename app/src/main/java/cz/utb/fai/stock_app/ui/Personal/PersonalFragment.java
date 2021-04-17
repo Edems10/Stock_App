@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 
 import com.github.mikephil.charting.animation.Easing;
@@ -25,67 +25,50 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cz.utb.fai.stock_app.FileHelper;
-import cz.utb.fai.stock_app.Models.PortfolioMoney;
-import cz.utb.fai.stock_app.Models.PortfolioStock;
-import cz.utb.fai.stock_app.Models.StockList;
-import cz.utb.fai.stock_app.Models.StockProfit;
+import cz.utb.fai.stock_app.models.History;
+import cz.utb.fai.stock_app.models.PortfolioMoney;
+import cz.utb.fai.stock_app.models.PortfolioStock;
 import cz.utb.fai.stock_app.R;
-import cz.utb.fai.stock_app.Models.Stock;
-import cz.utb.fai.stock_app.Models.History;
-import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
-public class PersonalFragment extends Fragment implements View.OnClickListener {
+public class PersonalFragment extends Fragment  {
 
-    FileHelper fileHelper;
-    Context context;
-    ArrayList<String> itemsForListViewHistory = new ArrayList<>();
-    ListView listViewHistory;
-    TextView textViewDashboard;
-    ArrayAdapter<String> adapter;
-    List<History> historyList = new ArrayList<>();
-    StockList stockList;
-    PieChart pieChart;
-    ArrayList<PortfolioStock> portfolioStocks;
-    List<StockProfit> stockProfits = new ArrayList<>();
-    View view;
+    private Context context;
+    private ArrayList<String> itemsListViewHistory = new ArrayList<>();
+    private ListView listViewHistory;
+    private TextView textViewDashboard;
+    private ArrayAdapter<String> adapter;
+    private PieChart pieChart;
+    private View view;
+    private PersonalViewModel personalViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_personal, container, false);
-
-        initUI(view);
-        initModels();
-
+        personalViewModel = ViewModelProviders.of(this).get(PersonalViewModel.class);
         try {
-            loadFiles();
+            personalViewModel.init(view.getContext());
+            initUI(view);
             createPortfolioChart();
             setTextViewDashboard();
+            initHistory();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        initHistory();
+
         return view;
     }
 
     private void setTextViewDashboard() throws IOException {
-
-        @SuppressLint("DefaultLocale") String format = String.format("%.2f%s", accountValue(),
-                fileHelper.loadCurrentMoney().getCurrency());
+        @SuppressLint("DefaultLocale") String format = String.format("%.2f%s", personalViewModel.getAccountValue(),
+                personalViewModel.getCurrency());
         textViewDashboard.setText(format);
     }
 
-    private void loadFiles() throws IOException {
-        portfolioStocks = fileHelper.loadFromPortfolio();
-        historyList = fileHelper.loadFromFileUserInteractions();
-    }
 
     private void initUI(View view) {
         context = getContext();
@@ -93,33 +76,24 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
         listViewHistory = view.findViewById(R.id.listViewHistory);
         pieChart = view.findViewById(R.id.pieChart);
         pieChart.setOnChartValueSelectedListener(new pieChartOnChartValueSelectedListener());
+        adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, itemsListViewHistory);
+        listViewHistory.setAdapter(adapter);
     }
 
-    private void initModels() {
-        fileHelper = new FileHelper(context.getApplicationContext());
-        stockList = StockList.getInstance();
-    }
 
     private void initHistory() {
-        adapter = new ArrayAdapter<>(context, android.R.layout.simple_selectable_list_item, itemsForListViewHistory);
-        listViewHistory.setAdapter(adapter);
+
+        List<History> historyList = personalViewModel.getHistory();
         for (int i = historyList.size() - 1; i >= 0; i--) {
             History interactions = historyList.get(i);
-            itemsForListViewHistory.add(interactions.getDate() + "  "
+            itemsListViewHistory.add(interactions.getDate() + "  "
                     + interactions.getOperation() + " "
                     + interactions.getAmount() + "  $"
                     + interactions.getName() + " for "
                     + interactions.getPrice() + "$");
-
         }
         adapter.notifyDataSetChanged();
     }
-
-    @Override
-    public void onClick(View view) {
-
-    }
-
 
     //shows value after clicking on pie chart
     private class pieChartOnChartValueSelectedListener implements OnChartValueSelectedListener {
@@ -127,70 +101,11 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
         @SuppressLint("DefaultLocale")
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-
-            String symbol = "Ticker:", amount = "Amount:", averagePrice = "Avg Cost:", percentageChange = "Change:",
-                    value = "Value:", profit = "Gain:", currentValue = "Price:", percent = "%";
-            PieEntry pieEntry = (PieEntry) e;
-            PortfolioMoney portfolioMoney = null;
-            try {
-                portfolioMoney = fileHelper.loadCurrentMoney();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-            if (portfolioMoney != null) {
-                if (pieEntry.getLabel().equals("CASH")) {
-                    symbol = String.format("%-15s$%s", symbol, portfolioMoney.getCurrency());
-                    amount = String.format("%-15s%.2f", amount, portfolioMoney.getAmount());
-                } else {
-                    for (int i = 0; i < stockProfits.size(); i++) {
-                        StockProfit stockProfit = stockProfits.get(i);
-                        if (pieEntry.getLabel().equals(stockProfit.getSymbol())) {
-
-                            symbol = String.format("%-15s$%s", symbol, stockProfit.getSymbol());
-                            amount = String.format("%-15s%d", amount, stockProfit.getAmount());
-                            averagePrice = String.format("%-15s%.2f", averagePrice, stockProfit.getAveragePrice());
-                            percentageChange = String.format("%-15s%.2f%s", percentageChange, stockProfit.getPercentageChange(), percent);
-                            currentValue = String.format("%-15s%.2f", currentValue, stockProfit.getCurrentPrice());
-                            profit = String.format("%-15s%.2f$", profit, stockProfit.getProfit());
-                            value = String.format("%-15s%.2f$", value, stockProfit.getValue());
-                            break;
-                        }
-                    }
-
-                }
-
-
-            }
-            new SimpleTooltip.Builder(context)
-                    .anchorView(view)
-                    .text(symbol + System.lineSeparator() +
-                            amount + System.lineSeparator() +
-                            averagePrice + System.lineSeparator() +
-                            currentValue + System.lineSeparator() +
-                            percentageChange + System.lineSeparator() +
-                            profit + System.lineSeparator() +
-                            value)
-                    .gravity(Gravity.CENTER)
-                    .onDismissListener(new SimpleTooltip.OnDismissListener() {
-                        @Override
-                        public void onDismiss(SimpleTooltip tooltip) {
-
-                        }
-                    })
-                    .onShowListener(new SimpleTooltip.OnShowListener() {
-                        @Override
-                        public void onShow(SimpleTooltip tooltip) {
-
-                        }
-                    })
-                    .build()
-                    .show();
-
+           personalViewModel.pieTooltip(e,context,view);
         }
 
         @Override
         public void onNothingSelected() {
-
         }
     }
 
@@ -198,19 +113,16 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
     private void initPieChart() {
         //using percentage as values instead of amount
         pieChart.setUsePercentValues(true);
-
         //disabling the legend
         pieChart.getLegend().setEnabled(false);
         //remove the description label on the lower left corner, default true if not set
         pieChart.getDescription().setEnabled(false);
-
         //enabling the user to rotate the chart, default true
         pieChart.setRotationEnabled(true);
         //adding friction when rotating the pie chart
         pieChart.setDragDecelerationFrictionCoef(0.9f);
         //setting the first entry start from right hand side, default starting from top
         pieChart.setRotationAngle(0);
-
         //highlight the entry when it is tapped, default true if not set
         pieChart.setHighlightPerTapEnabled(true);
         //adding animation so the entries pop up from 0 degree
@@ -218,7 +130,6 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
         //setting the color of the hole in the middle, default white
         pieChart.setHoleRadius(0f);
         pieChart.setTransparentCircleRadius(0f);
-
     }
 
 
@@ -227,7 +138,8 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
 
         ArrayList<PieEntry> pieEntries = new ArrayList<>();
 
-        PortfolioMoney portfolioMoney = fileHelper.loadCurrentMoney();
+        PortfolioMoney portfolioMoney =  personalViewModel.getCurrentMoney();
+        ArrayList<PortfolioStock> portfolioStocks = personalViewModel.getPortfolioStocks();
         String label = "";
 
         //initializing data
@@ -275,48 +187,5 @@ public class PersonalFragment extends Fragment implements View.OnClickListener {
         pieChart.setData(pieData);
         pieChart.invalidate();
 
-
     }
-
-    private double accountValue() throws IOException {
-
-        List<Stock> currentStocks = stockList.getCurrentStocks();
-
-        if(portfolioStocks!=null) {
-            for (int i = 0; i < portfolioStocks.size(); i++) {
-                calculateProfit(currentStocks, portfolioStocks.get(i));
-            }
-
-        }
-        double accountValue = 0;
-        for (int i = 0; i < stockProfits.size(); i++) {
-            accountValue += stockProfits.get(i).getValue();
-        }
-        return accountValue + fileHelper.loadCurrentMoney().getAmount();
-
-    }
-
-    private void calculateProfit(@NotNull List<Stock> currentStocks, PortfolioStock portfolioStock) {
-       if(currentStocks!=null) {
-           for (int i = 0; i < currentStocks.size(); i++) {
-               Stock stock = currentStocks.get(i);
-
-               if (portfolioStock.getTicker().equals(stock.Symbol)) {
-                   float percentageChange = (float) ((stock.Price - portfolioStock.getAveragePrice()) / stock.Price) * 100;
-                   //zmena here
-                   double profit = (stock.Price * portfolioStock.getAmount()) - (portfolioStock.getAveragePrice() * portfolioStock.getAmount());
-                   double value = profit + (portfolioStock.getAveragePrice() * portfolioStock.getAmount());
-                   StockProfit stockProfit = new StockProfit(stock.Symbol,
-                           portfolioStock.getAmount(),
-                           portfolioStock.getAveragePrice(),
-                           stock.Price, percentageChange,
-                           profit,
-                           value);
-                   stockProfits.add(stockProfit);
-                   return;
-               }
-           }
-       }
-    }
-
 }

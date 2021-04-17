@@ -10,6 +10,10 @@
     <string name="graph_text_view">Loading data…</string>
     <string name="graph_edit_text_amount">1</string>
     <string name="personal_text_history">Your History</string>
-    <string name="fragment_stock_switch">AlphaVantage</string>
+    <string name="ticker">Ticker</string>
+    <string name="price">Price</string>
+    <string name="Change">Change</string>
+    <string name="ChangePercentage">Change%</string>
     <string name="personal_detail">Click item for more detail</string>
+
 </resources>
