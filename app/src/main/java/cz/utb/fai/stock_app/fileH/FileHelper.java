@@ -25,7 +25,7 @@ import cz.utb.fai.stock_app.models.History;
 
 public  class FileHelper extends Application {
 
-    final static String pathToStorage = Environment.getExternalStorageDirectory().getAbsolutePath();
+
     final static String fileNameMoney = "money";
     final static String fileNameHistory = "history";
     final static String fileNamePortfolio = "portfolio";
@@ -34,8 +34,7 @@ public  class FileHelper extends Application {
     public FileHelper(Context context) {
         this.dir = new File(context.getFilesDir(),"");;
     }
-
-
+    
 
     public List<History> loadFromFileUserInteractions() throws IOException {
         Gson gson = new Gson();

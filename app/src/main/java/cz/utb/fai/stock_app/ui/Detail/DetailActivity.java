@@ -94,7 +94,4 @@ public class DetailActivity extends AppCompatActivity {
         detailViewModel.setTextTextViews();
 
     }
-
-
-
 }
