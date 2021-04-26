@@ -1,8 +1,7 @@
-package cz.utb.fai.stock_app.fileH;
+package cz.utb.fai.stock_app.temp;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Environment;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,8 +33,13 @@ public  class FileHelper extends Application {
     public FileHelper(Context context) {
         this.dir = new File(context.getFilesDir(),"");;
     }
-    
 
+
+    /**
+     * Loads history from internal file
+     * @return List with all data saved in internal file History
+     * @throws IOException
+     */
     public List<History> loadFromFileUserInteractions() throws IOException {
         Gson gson = new Gson();
         File file = new File(dir, fileNameHistory);
@@ -52,7 +56,12 @@ public  class FileHelper extends Application {
         return gson.fromJson(dataFromFile, dataListType);
     }
 
-    public void storeToFileUserInteractions(History history) throws IOException {
+    /**
+     * Saves history to internal file with json formatting
+     * @param history
+     * @throws IOException
+     */
+    public void storeToFileHistory(History history) throws IOException {
         Gson gson = new Gson();
         String userInteractionsToJson = gson.toJson(history);
         File file = new File(dir, fileNameHistory);
@@ -75,7 +84,11 @@ public  class FileHelper extends Application {
             }
     }
 
-    //creates File with Fake Money
+    /**
+     * Creates file with fake monez
+     * @param portfolioMoney
+     * @throws IOException
+     */
     private void createFakeMoney(PortfolioMoney portfolioMoney)throws IOException{
         Gson gson = new Gson();
         String settingsToJson = gson.toJson(portfolioMoney);
@@ -90,7 +103,11 @@ public  class FileHelper extends Application {
         }
     }
 
-    //loads current amount and currency from file
+    /**
+     * Loads current amount and currency from file
+     * @return current money and currency in PortfolioMoney class
+     * @throws IOException
+     */
     public PortfolioMoney loadCurrentMoney() throws IOException {
         Gson gson = new Gson();
         File file = new File(dir, fileNameMoney);
@@ -106,9 +123,13 @@ public  class FileHelper extends Application {
         return gson.fromJson(dataFromFile, dataListType);
     }
 
-    //value - amount of money sold/bought
-    //trade -Side of trade - buy/sell
-    //portfolioMoney - current value of accnount
+    /**
+     * Edits file with current money depending on if the action is sell or buy
+     * @param value amount of money sold/bought
+     * @param trade side of trade - Enum Trade
+     * @param portfolioMoney current value of account in class PortfolioMoney
+     * @throws IOException
+     */
     public void editMoney(double value, Trade trade,PortfolioMoney portfolioMoney) throws IOException {
         Gson gson = new Gson();
         File file = new File(dir, fileNameMoney);
@@ -134,6 +155,14 @@ public  class FileHelper extends Application {
         }
     }
 
+    /**
+     * If there is enough stock in file removes the amount from file and adds money to file with
+     * money
+     * @param stock stock that is being sold
+     * @param amount amount of stock sold
+     * @return
+     * @throws IOException
+     */
     public boolean sellStockPortfolio(Stock stock,int amount)throws IOException{
 
         double priceOfTrade = stock.getPrice()*amount;
@@ -146,6 +175,13 @@ public  class FileHelper extends Application {
         return false;
     }
 
+    /**
+     * If there is enough money in ads the amount of stock to file and removes money from file
+     * @param stock stock that is being bought
+     * @param amount amount of stock bought
+     * @return
+     * @throws IOException
+     */
     public boolean buyStockPortfolio(Stock stock,int amount)throws IOException {
         PortfolioMoney portfolioMoney = loadCurrentMoney();
         double priceOfTrade = stock.getPrice() * amount;
@@ -158,13 +194,19 @@ public  class FileHelper extends Application {
         return false;
     }
 
+    /**
+     * Adds stock to internal file that stores all stocks owned and recalculates average price
+     * @param stock
+     * @param amount
+     * @throws IOException
+     */
     private void buyStockAddToPortfolio(Stock stock, int amount) throws IOException {
         List<PortfolioStock> portfolioStockList = loadFromPortfolio();
         if(portfolioStockList==null)portfolioStockList=new ArrayList<>();
 
-        int currentAmount=0;
-        double currentAveragePrice=0;
-        boolean found =false;
+        int currentAmount;
+        double currentAveragePrice;
+        boolean found = false;
         for(int i=0;i<portfolioStockList.size();i++)
         {
             PortfolioStock portfolioStock = portfolioStockList.get(i);
@@ -189,11 +231,19 @@ public  class FileHelper extends Application {
         storeToPortfolio(portfolioStockList);
     }
 
+    /**
+     * If there is enough stock to sell - removes stock from portfolio file and returns true
+     * else returns false
+     * @param stock
+     * @param amount
+     * @return True if enough stock was in file False if not enough stock was in file
+     * @throws IOException
+     */
     private boolean sellStockAddToPortfolio(Stock stock, int amount) throws IOException {
         List<PortfolioStock> portfolioStockList = loadFromPortfolio();
         if(portfolioStockList==null)return false;
 
-        int currentAmount=0;
+        int currentAmount;
         for(int i=0;i<portfolioStockList.size();i++)
         {
             PortfolioStock portfolioStock = portfolioStockList.get(i);
@@ -206,14 +256,17 @@ public  class FileHelper extends Application {
                     portfolioStockList.set(i,portfolioStock);
                    storeToPortfolio(portfolioStockList);
                     return true;
-
             }
         }
         return false;
     }
 
-    //stores Portfolio Stock to File
-    public void storeToPortfolio(List<PortfolioStock> portfolioStockList) throws IOException {
+    /**
+     * Stores List of PortfolioStock to internal file
+     * @param portfolioStockList list of PorfolioStock class
+     * @throws IOException
+     */
+    private void storeToPortfolio(List<PortfolioStock> portfolioStockList) throws IOException {
         Gson gson = new Gson();
         File file = new File(dir, fileNamePortfolio);
         String userInteractionsToJson = gson.toJson(portfolioStockList);
@@ -228,7 +281,12 @@ public  class FileHelper extends Application {
 
     }
 
-    //loads file to arrayList
+
+    /**
+     * Loads file to arrayList of PortfolioStock class
+     * @return Array list of PortfoliStock
+     * @throws IOException
+     */
     public ArrayList<PortfolioStock> loadFromPortfolio() throws IOException {
         Gson gson = new Gson();
         File file = new File(dir, fileNamePortfolio);
@@ -245,7 +303,9 @@ public  class FileHelper extends Application {
     }
 
 
-    //creates default file with money
+    /**
+     * Creates internal file with 10000 $ if it doesn't already exist
+     */
     public void checkMoneyExists() {
         File file = new File(dir, fileNameMoney);
         if (!file.exists()) {
@@ -258,7 +318,9 @@ public  class FileHelper extends Application {
         }
     }
 
-
+    /**
+     * Creates internal file history if it doesn't already exist
+     */
     public void checkHistoryExists() {
         File file = new File(dir, fileNameHistory);
         if (!file.exists()) {
@@ -270,7 +332,9 @@ public  class FileHelper extends Application {
         }
     }
 
-
+    /**
+     * Creates internal file portfolio if it doesn't already exist
+     */
     public void checkPortfolioExists() {
         File file = new File(dir, fileNamePortfolio);
         if (!file.exists()) {
@@ -282,6 +346,9 @@ public  class FileHelper extends Application {
         }
     }
 
+    /**
+     * Creates internal directory if it doesn't already exist
+     */
     public void checkdirExists() {
         if(!dir.exists()){
             dir.mkdir();

@@ -11,9 +11,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/guideline85horizontal"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/guideline50vertical"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline70horizontal">
+        app:layout_constraintTop_toBottomOf="@id/guideline30horizontal">
 
         <ListView
             android:id="@+id/listViewHistory"
@@ -26,22 +26,30 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/guideline64horizontal"
+        app:layout_constraintBottom_toTopOf="@id/guideline85horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toRightOf="@id/guideline50vertical"
         app:layout_constraintTop_toBottomOf="@id/guideline6horizontal">
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pieChart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toBottomOf="parent">
 
         </com.github.mikephil.charting.charts.PieChart>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline50vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.55" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline6horizontal"
         android:layout_width="wrap_content"
@@ -49,11 +57,25 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.06" />
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline20horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline30horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline64horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.64" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline70horizontal"
         android:layout_width="wrap_content"
@@ -66,7 +88,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.92" />
+        app:layout_constraintGuide_percent="0.85" />
     <TextView
         android:id="@+id/text_dashboard"
         android:layout_width="0dp"
@@ -74,10 +96,10 @@
         android:textAlignment="center"
         android:gravity="center"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline6horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/guideline20horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/guideline50vertical"
+        app:layout_constraintTop_toTopOf="@id/guideline6horizontal" />
 
     <TextView
         android:id="@+id/textHistory"
@@ -87,13 +109,9 @@
         android:textAlignment="center"
         android:gravity="center"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline70horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/guideline30horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline64horizontal" />
-
-
-
-
+        app:layout_constraintStart_toStartOf="@id/guideline50vertical"
+        app:layout_constraintTop_toTopOf="@+id/guideline20horizontal" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

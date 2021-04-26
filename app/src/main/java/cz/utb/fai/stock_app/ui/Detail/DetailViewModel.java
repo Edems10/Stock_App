@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.utb.fai.stock_app.enums.Trade;
-import cz.utb.fai.stock_app.fileH.FileHelper;
+import cz.utb.fai.stock_app.temp.FileHelper;
 import cz.utb.fai.stock_app.models.History;
 import cz.utb.fai.stock_app.models.HistoryGraph;
 import cz.utb.fai.stock_app.models.Prediction;
@@ -95,7 +95,7 @@ public class DetailViewModel extends ViewModel {
             History history = new History(date, stock.getSymbol(), String.valueOf(stock.getPrice()), String.valueOf(amount.getText()), Trade.SELL);
             try {
                 if (fileHelper.sellStockPortfolio(stock, Integer.valueOf(String.valueOf(amount.getText())))) {
-                    fileHelper.storeToFileUserInteractions(history);
+                    fileHelper.storeToFileHistory(history);
                     Toast.makeText(amount.getContext(), "You just Sold:" + amount.getText() + " of " + stock.getSymbol(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(amount.getContext(), "Cannot Sell " + amount.getText() + " of " + stock.getSymbol() +
@@ -117,7 +117,7 @@ public class DetailViewModel extends ViewModel {
             History history = new History(date, stock.getSymbol(), String.valueOf(stock.getPrice()), String.valueOf(amount.getText()), Trade.BUY);
             try {
                 if (fileHelper.buyStockPortfolio(stock, Integer.valueOf(String.valueOf(amount.getText())))) {
-                    fileHelper.storeToFileUserInteractions(history);
+                    fileHelper.storeToFileHistory(history);
                     Toast.makeText(amount.getContext(), "You just bought:" + amount.getText() + " of " + stock.getSymbol(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(amount.getContext(), "Cannot buy " + amount.getText() + " of " + stock.getSymbol() +
