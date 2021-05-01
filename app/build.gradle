@@ -31,9 +31,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     implementation 'com.android.volley:volley:1.1.1'
-//The MIT License (MIT)
-//
-//Copyright (c) 2016 Douglas Nassif Roma Junior
     implementation 'com.github.douglasjunior:android-simple-tooltip:1.0.0-rc.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'

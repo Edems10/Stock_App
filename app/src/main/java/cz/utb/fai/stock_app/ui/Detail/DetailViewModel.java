@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.utb.fai.stock_app.enums.Trade;
-import cz.utb.fai.stock_app.temp.FileHelper;
+import cz.utb.fai.stock_app.helpers.FileHelper;
 import cz.utb.fai.stock_app.models.History;
 import cz.utb.fai.stock_app.models.HistoryGraph;
 import cz.utb.fai.stock_app.models.Prediction;
@@ -254,9 +254,9 @@ public class DetailViewModel extends ViewModel {
             }
             BarDataSet barDataSet = new BarDataSet(stockDays, stock.getSymbol());
             if (stock.getChange() <= 0)
-                barDataSet.setColor(Color.rgb(255, 20, 20));
+                barDataSet.setColor(Color.rgb(204, 0, 0));
             else
-                barDataSet.setColor(Color.rgb(50, 255, 100));
+                barDataSet.setColor(Color.rgb(0, 102, 0));
             barDataSet.setValueTextSize(16f);
             BarData barData = new BarData(barDataSet);
             XAxis xAxis = chart.getXAxis();

@@ -12,11 +12,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.utb.fai.stock_app.temp.FileHelper;
+import cz.utb.fai.stock_app.helpers.FileHelper;
 import cz.utb.fai.stock_app.models.PortfolioStock;
 import cz.utb.fai.stock_app.models.Stock;
 import cz.utb.fai.stock_app.repo.StockRepository;
-import cz.utb.fai.stock_app.temp.NetworkHelper;
+import cz.utb.fai.stock_app.helpers.NetworkHelper;
 
 public class StockViewModel extends ViewModel implements Serializable {
 

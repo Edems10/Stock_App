@@ -1,4 +1,4 @@
-package cz.utb.fai.stock_app.temp;
+package cz.utb.fai.stock_app.helpers;
 
 import android.app.Application;
 import android.content.Context;

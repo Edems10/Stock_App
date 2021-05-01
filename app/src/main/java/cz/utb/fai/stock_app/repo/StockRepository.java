@@ -2,6 +2,8 @@ package cz.utb.fai.stock_app.repo;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.accessibility.AccessibilityManager;
+import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -66,7 +68,7 @@ public class StockRepository {
         return false;
     }
 
-    public void GetSymbolBasicInfo(final String symbol,Context context)
+    public void GetSymbolBasicInfo(final String symbol, final Context context)
     {
         if (!checkSymbolExists(symbol)) {
             final String[] Values = {"01. symbol", "02. open", "03. high", "04. low", "05. price", "06. volume", "07. latest trading day", "08. previous close", "09. change", "10. change percent"};
@@ -113,7 +115,10 @@ public class StockRepository {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.e("tmp", "" + error + "");
+                            /// TODO: 28.04.2021  
+                            Toast.makeText(context,"Error with server",Toast.LENGTH_SHORT);
+                            Log.e("tmp", "" + error + ""
+                            );
                         }
                     });
             queue.add(stringRequest);

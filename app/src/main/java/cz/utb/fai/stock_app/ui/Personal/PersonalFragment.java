@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import cz.utb.fai.stock_app.models.History;
 import cz.utb.fai.stock_app.models.PortfolioMoney;
@@ -160,13 +161,13 @@ public class PersonalFragment extends Fragment  {
 
         //initializing colors for the entries
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.parseColor("#304567"));
-        colors.add(Color.parseColor("#309967"));
-        colors.add(Color.parseColor("#476567"));
-        colors.add(Color.parseColor("#890567"));
-        colors.add(Color.parseColor("#a35567"));
-        colors.add(Color.parseColor("#ff5f67"));
-        colors.add(Color.parseColor("#3ca567"));
+        int size = personalViewModel.getStocks().getValue().size();
+        for(int col =0;col<=size;col++)
+        {
+            Random rnd = new Random();
+            int random_color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+            colors.add(random_color);
+        }
 
         //input data and fit data into pie chart entry
         for (String type : typeAmountMap.keySet()) {

@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.utb.fai.stock_app.temp.FileHelper;
+import cz.utb.fai.stock_app.helpers.FileHelper;
 import cz.utb.fai.stock_app.models.History;
 import cz.utb.fai.stock_app.models.PortfolioMoney;
 import cz.utb.fai.stock_app.models.PortfolioStock;
@@ -109,6 +109,7 @@ public class PersonalViewModel extends ViewModel {
         return historyList;
     }
     public double accountValue() {
+        accountValue=0;
         if(portfolioStocks!=null) {
             for (int i = 0; i < portfolioStocks.size(); i++) {
                 calculateProfit( mStock, portfolioStocks.get(i));

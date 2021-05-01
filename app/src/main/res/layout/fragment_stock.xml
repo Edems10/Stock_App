@@ -13,10 +13,8 @@
         android:text="@string/button_add_fragmet_stock"
         app:layout_constraintBottom_toTopOf="@+id/guideline20horizontal"
         app:layout_constraintEnd_toStartOf="@+id/guideline6horizontal"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline64horizontal"
-        app:layout_constraintTop_toTopOf="@+id/guideline7horizontal"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline7horizontal" />
 
     <EditText
         android:id="@+id/editTextStockList"
@@ -28,10 +26,8 @@
         android:inputType="textCapCharacters"
         app:layout_constraintBottom_toTopOf="@+id/guideline7horizontal"
         app:layout_constraintEnd_toStartOf="@+id/guideline6horizontal"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline64horizontal"
-        app:layout_constraintTop_toTopOf="@+id/guideline2horizontal"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline2horizontal" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2horizontal"
