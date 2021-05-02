@@ -2,7 +2,6 @@ package cz.utb.fai.stock_app.repo;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
@@ -21,6 +20,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.models.Stock;
 
 public class StockRepository {
@@ -75,10 +75,8 @@ public class StockRepository {
             if (queue == null) {
                 queue = Volley.newRequestQueue(context);
             }
-            // works on emulator
-            String url1 = "http://10.0.2.2:8080/edems_swag/stock_api/1.0.0/quote?ticker=" + symbol;
-            //works for mobile on same network
-            String url2 = "http://10.0.0.1:8080/edems_swag/stock_api/1.0.0/quote?ticker=" + symbol;
+            String url1 = "http://"+context.getString(R.string.IP_ADDRESS)+":8080/edems_swag/stock_api/1.0.0/quote?ticker=" + symbol;
+
 
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
                     new Response.Listener<String>() {

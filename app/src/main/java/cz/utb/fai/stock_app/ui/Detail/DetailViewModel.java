@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import cz.utb.fai.stock_app.R;
 import cz.utb.fai.stock_app.enums.Trade;
 import cz.utb.fai.stock_app.helpers.FileHelper;
 import cz.utb.fai.stock_app.models.History;
@@ -143,13 +144,9 @@ public class DetailViewModel extends ViewModel {
 
     public void getPredictionData() {
 
-        //     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&apikey=" + getString(R.string.AlphaVantageKey);
-        // works on emulator
-        String url1 = "http://10.0.2.2:8080/edems_swag/stock_api/1.0.0/prediction?ticker=" + stock.getSymbol();
-        //works for mobile on same network
-        String url2 = "http://10.0.0.1:8080/edems_swag/stock_api/1.0.0/prediction?ticker=" + stock.getSymbol();
+        String predict = "http://"+context.getString(R.string.IP_ADDRESS)+":8080/edems_swag/stock_api/1.0.0/prediction?ticker=" + stock.getSymbol();
         progressBar.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, predict,
                 new Response.Listener<String>() {
                     @SuppressLint("DefaultLocale")
                     @Override
@@ -208,13 +205,10 @@ public class DetailViewModel extends ViewModel {
             Calendar calendar = Calendar.getInstance();
             getDateForAPI(35, calendar);
         }
-        //     String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&apikey=" + getString(R.string.AlphaVantageKey);
-        // works on emulator
-        String url1 = "http://10.0.2.2:8080/edems_swag/stock_api/1.0.0/history?ticker=" + stock.getSymbol();
-        //works for mobile on same network
-        String url2 = "http://10.0.0.1:8080/edems_swag/stock_api/1.0.0/history?ticker=" + stock.getSymbol();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url1,
+        String urlData = "http://"+context.getString(R.string.IP_ADDRESS)+":8080/edems_swag/stock_api/1.0.0/history?ticker=" + stock.getSymbol();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, urlData,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
