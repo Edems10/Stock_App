@@ -3,8 +3,7 @@
     10.0.2.2 emulator localhost
     my localhost 10.0.0.5
     -->
-    <string name="IP_ADDRESS">10.0.0.5</string>
-
+    <string name="IP_ADDRESS">10.0.2.2</string>
     <string name="app_name">Stock_App</string>
     <string name="title_stocks">Stocks</string>
     <string name="title_personal">Personal</string>

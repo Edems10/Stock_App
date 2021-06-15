@@ -188,7 +188,7 @@ public class DetailViewModel extends ViewModel {
 
         predictionA.setVisibility(View.VISIBLE);
         predictionA.setText(String.format(" %.2f", prediction.getMean_ab_er()));
-        high.setText("Average Error:");
+        high.setText("Mean absolute error:");
 
         formater = String.format("%.2f", prediction.getAccuracy()*100)+"%";
         predictionE.setVisibility(View.VISIBLE);
